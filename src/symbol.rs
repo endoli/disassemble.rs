@@ -6,7 +6,9 @@
 
 use address::Address;
 
-/// A symbol within an executable or library. This is a named address.
+/// A symbol within an executable or library. This is a named [address].
+///
+/// [address]: struct.Address.html
 #[derive(Debug)]
 pub struct Symbol {
     /// The [address] of this symbol.
