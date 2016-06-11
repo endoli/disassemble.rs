@@ -11,19 +11,27 @@ use symbol::Symbol;
 /// A function within a program.
 #[derive(Debug)]
 pub struct Function<'f> {
-    /// The [symbol] for this function. This provides the name and `Address`.
+    /// The [symbol] for this function. This provides the name and [`Address`].
     ///
+    /// [`Address`]: struct.Symbol.html
     /// [symbol]: struct.Symbol.html
     pub symbol: Symbol,
-    /// The instructions that comprise this function.
+    /// The [instructions] that comprise this function.
+    ///
+    /// [instructions]: trait.Instruction.html
     pub instructions: Vec<Box<Instruction>>,
-    /// The basic blocks that comprise this function. These are algorithmically
+    /// The [basic blocks] that comprise this function. These are algorithmically
     /// determined from the `instructions` via `fn build_basic_blocks`.
     ///
     /// The `basic_blocks` of a `Function` make up a [control flow graph].
     ///
+    /// [basic blocks]: struct.BasicBlock.html
     /// [control flow graph]: https://en.wikipedia.org/wiki/Control_flow_graph
     pub basic_blocks: Vec<BasicBlock<'f>>,
+    /// The entry [`BasicBlock`] for this function.
+    ///
+    /// [`BasicBlock`]: struct.BasicBlock.html
+    pub entry_block: Option<&'f BasicBlock<'f>>,
 }
 
 impl<'f> Function<'f> {
@@ -38,5 +46,6 @@ impl<'f> Function<'f> {
             bb.instructions.push(inst);
         }
         self.basic_blocks.push(bb);
+        self.entry_block = Some(&self.basic_blocks[0]);
     }
 }
