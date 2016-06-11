@@ -35,7 +35,7 @@ impl<'f> Function<'f> {
         // block. In the future, we'll implement this correctly.
         let mut bb = BasicBlock::new(self.basic_blocks.len(), "anonymous");
         for inst in &self.instructions {
-            bb.instructions.push(&inst);
+            bb.instructions.push(inst);
         }
         self.basic_blocks.push(bb);
     }
