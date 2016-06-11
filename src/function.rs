@@ -6,12 +6,23 @@
 
 use basicblock::BasicBlock;
 use instruction::Instruction;
+use symbol::Symbol;
 
-#[allow(missing_docs)]
+/// A function within a program.
 #[derive(Debug)]
 pub struct Function<'f> {
-    pub name: String,
+    /// The [symbol] for this function. This provides the name and `Address`.
+    ///
+    /// [symbol]: struct.Symbol.html
+    pub symbol: Symbol,
+    /// The instructions that comprise this function.
     pub instructions: Vec<Box<Instruction>>,
+    /// The basic blocks that comprise this function. These are algorithmically
+    /// determined from the `instructions` via `fn build_basic_blocks`.
+    ///
+    /// The `basic_blocks` of a `Function` make up a [control flow graph].
+    ///
+    /// [control flow graph]: https://en.wikipedia.org/wiki/Control_flow_graph
     pub basic_blocks: Vec<BasicBlock<'f>>,
 }
 

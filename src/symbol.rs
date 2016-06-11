@@ -9,7 +9,9 @@ use address::Address;
 /// A symbol within an executable or library. This is a named address.
 #[derive(Debug)]
 pub struct Symbol {
-    /// The address of this symbol.
+    /// The [address] of this symbol.
+    ///
+    /// [address]: struct.Address.html
     pub address: Address,
     /// The name of this symbol.
     pub name: String,
