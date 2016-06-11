@@ -18,8 +18,51 @@
 //! this crate may move in the future to a separate crate for broader
 //! re-use. This might impact [`Symbol`] among other things.
 //!
+//! ## Installation
+//!
+//! This crate works with Cargo and is on
+//! [crates.io](https://crates.io/crates/disassemble).
+//! Add it to your `Cargo.toml` like so:
+//!
+//! ```toml
+//! [dependencies]
+//! disassemble = "0.0.1"
+//! ```
+//!
+//! Then, let `rustc` know that you're going to use this crate at the
+//! top of your own crate:
+//!
+//! ```
+//! extern crate disassemble;
+//! # fn main() {}
+//! ```
+//!
+//! ## Future Directions
+//!
+//! In the future, we want to extend this library to support a number of
+//! additional features:
+//!
+//! * Actually implement building the CFG from the instructions.
+//! * Switch to using the [petgraph] crate for the CFG and store that on
+//!   [`Function`] instead of having the `Function` be the CFG.
+//! * Implement DOT output for the CFG. This can probably be done with the
+//!   help of `petgraph`.
+//! * HTML output modes?
+//! * Implement loop finding. (Havlak)
+//! * Implement the [Capstone Engine] backend as a separate crate.
+//! * Make [`Instruction`] aware of operands, registers
+//! * Data flow support. Memory SSA?
+//! * Should we deal with mangled symbols at this level?
+//! * So much more!
+//!
+//! ## Contributions
+//!
+//! Contributions are welcome.
+//!
 //! [Capstone Engine]: http://www.capstone-engine.org/
+//! [`Function`]: struct.Function.html
 //! [`Instruction`]: trait.Instruction.html
+//! [petgraph]: https://crates.io/crates/petgraph
 //! [`Symbol`]: struct.Symbol.html
 
 #![warn(missing_docs)]
