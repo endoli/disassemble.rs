@@ -34,7 +34,7 @@ mod instruction;
 mod symbol;
 
 pub use self::address::Address;
-pub use self::basicblock::{BasicBlock, BasicBlockEdge, BasicBlockRef};
+pub use self::basicblock::{BasicBlock, BasicBlockRef};
 pub use self::function::Function;
 pub use self::instruction::Instruction;
 pub use self::symbol::Symbol;

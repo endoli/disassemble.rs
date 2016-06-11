@@ -57,10 +57,3 @@ impl<'f> BasicBlock<'f> {
         self.out_edges.push(BasicBlockRef { id: bb.id });
     }
 }
-
-#[allow(missing_docs)]
-#[derive(Debug)]
-pub struct BasicBlockEdge {
-    pub from: BasicBlockRef,
-    pub to: BasicBlockRef,
-}
