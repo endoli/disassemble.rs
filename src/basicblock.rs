@@ -6,15 +6,6 @@
 
 use instruction::Instruction;
 
-/// A reference to a [`BasicBlock`].
-///
-/// [`BasicBlock`]: struct.BasicBlock.html
-#[derive(Clone,Copy,Debug)]
-pub struct BasicBlockRef {
-    /// The ID for the referenced `BasicBlock`.
-    pub id: usize,
-}
-
 /// A [basic block] is a sequence of instructions with no inward-bound
 /// branches except to the entry point and no outward-bound branches
 /// except at the exit.
@@ -30,9 +21,9 @@ pub struct BasicBlock<'f> {
     /// The instructions within this basic block.
     pub instructions: Vec<&'f Box<Instruction>>,
     /// The basic blocks that point to this one.
-    pub in_edges: Vec<BasicBlockRef>,
+    pub in_edges: Vec<&'f BasicBlock<'f>>,
     /// The basic blocks which can be exited to from this one.
-    pub out_edges: Vec<BasicBlockRef>,
+    pub out_edges: Vec<&'f BasicBlock<'f>>,
 }
 
 impl<'f> BasicBlock<'f> {
@@ -48,12 +39,12 @@ impl<'f> BasicBlock<'f> {
     }
 
     /// Add an edge that points to this basic block.
-    pub fn add_in_edge(&mut self, bb: &BasicBlock<'f>) {
-        self.in_edges.push(BasicBlockRef { id: bb.id });
+    pub fn add_in_edge(&'f mut self, bb: &'f BasicBlock<'f>) {
+        self.in_edges.push(bb);
     }
 
     /// Add an edge that points from this basic block to another.
-    pub fn add_out_edge(&mut self, bb: &BasicBlock<'f>) {
-        self.out_edges.push(BasicBlockRef { id: bb.id });
+    pub fn add_out_edge(&'f mut self, bb: &'f BasicBlock<'f>) {
+        self.out_edges.push(bb);
     }
 }
