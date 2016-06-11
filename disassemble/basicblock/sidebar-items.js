@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["BasicBlock","A basic block is a set of instructions leading from an entry point to an exit."],["BasicBlockEdge",""],["BasicBlockRef","A reference to a [`BasicBlock`]."]]});
