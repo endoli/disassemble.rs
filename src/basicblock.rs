@@ -15,8 +15,11 @@ pub struct BasicBlockRef {
     pub id: usize,
 }
 
-/// A basic block is a set of instructions leading from
-/// an entry point to an exit.
+/// A [basic block] is a sequence of instructions with no inward-bound
+/// branches except to the entry point and no outward-bound branches
+/// except at the exit.
+///
+/// [basic block]: https://en.wikipedia.org/wiki/Basic_block
 #[derive(Debug)]
 pub struct BasicBlock<'f> {
     /// The ID # for this basic block. This is artificial information and
