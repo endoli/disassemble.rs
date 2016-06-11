@@ -137,7 +137,7 @@
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>build_basic_blocks</span>(<span class='kw-2'>&amp;</span><span class='lifetime'>&#39;f</span> <span class='kw-2'>mut</span> <span class='self'>self</span>) {
         <span class='comment'>// For now, let&#39;s just put all instructions into a single basic</span>
         <span class='comment'>// block. In the future, we&#39;ll implement this correctly.</span>
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>bb</span> <span class='op'>=</span> <span class='ident'>BasicBlock</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>basic_blocks</span>.<span class='ident'>len</span>(), <span class='string'>&quot;anonymous&quot;</span>);
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>bb</span> <span class='op'>=</span> <span class='ident'>BasicBlock</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>basic_blocks</span>.<span class='ident'>len</span>(), <span class='prelude-val'>None</span>);
         <span class='kw'>for</span> <span class='ident'>inst</span> <span class='kw'>in</span> <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>instructions</span> {
             <span class='ident'>bb</span>.<span class='ident'>instructions</span>.<span class='ident'>push</span>(<span class='ident'>inst</span>);
         }
