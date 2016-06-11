@@ -41,7 +41,7 @@ pub struct BasicBlock<'f> {
     /// not something from the disassembly.
     pub id: usize,
     /// The name of the basic block. Not all blocks have meaningful names.
-    pub name: String,
+    pub name: Option<String>,
     /// The instructions within this basic block.
     pub instructions: Vec<&'f Box<Instruction>>,
     /// The basic blocks that point to this one.
@@ -52,10 +52,10 @@ pub struct BasicBlock<'f> {
 
 impl<'f> BasicBlock<'f> {
     /// Construct a new `BasicBlock`.
-    pub fn new(id: usize, name: &str) -> Self {
+    pub fn new(id: usize, name: Option<&str>) -> Self {
         BasicBlock {
             id: id,
-            name: name.to_owned(),
+            name: name.map(|s| s.to_owned()),
             instructions: vec![],
             in_edges: vec![],
             out_edges: vec![],
