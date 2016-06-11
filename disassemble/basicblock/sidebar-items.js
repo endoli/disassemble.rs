@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["BasicBlock","A [basic block] is a sequence of instructions with no inward-bound branches except to the entry point and no outward-bound branches except at the exit."],["BasicBlockRef","A reference to a [`BasicBlock`]."]]});
+initSidebarItems({"struct":[["BasicBlock","A [basic block] is a sequence of instructions with no inward-bound branches except to the entry point and no outward-bound branches except at the exit."]]});
