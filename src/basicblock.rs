@@ -7,7 +7,7 @@
 use instruction::Instruction;
 
 /// When is this edge taken? Conditionally or unconditionally?
-#[derive(Clone,Copy,Debug)]
+#[derive(Clone,Copy,Debug,Eq,PartialEq)]
 pub enum EdgeType {
     /// This edge is taken when a conditional is true.
     ConditionalTrue,
@@ -18,7 +18,7 @@ pub enum EdgeType {
 }
 
 /// Which direction is this edge going? Inwards or outwards from this `BasicBlock`?
-#[derive(Clone,Copy,Debug)]
+#[derive(Clone,Copy,Debug,Eq,PartialEq)]
 pub enum EdgeDirection {
     /// This is an inbound edge with this [`BasicBlock`] as the target.
     ///
