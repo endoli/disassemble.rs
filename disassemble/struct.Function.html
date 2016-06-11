@@ -47,16 +47,23 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-81' class='srclink' href='../src/disassemble/src/function.rs.html#12-16' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-72' class='srclink' href='../src/disassemble/src/function.rs.html#13-27' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Function&lt;'f&gt; {
-    pub name: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
+    pub symbol: <a class='struct' href='../disassemble/struct.Symbol.html' title='disassemble::Symbol'>Symbol</a>,
     pub instructions: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;<a class='trait' href='../disassemble/trait.Instruction.html' title='disassemble::Instruction'>Instruction</a>&gt;&gt;,
     pub basic_blocks: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../disassemble/struct.BasicBlock.html' title='disassemble::BasicBlock'>BasicBlock</a>&lt;'f&gt;&gt;,
-}</pre><h2 class='fields'>Fields</h2>
+}</pre><div class='docblock'><p>A function within a program.</p>
+</div><h2 class='fields'>Fields</h2>
 <table><tr class='stab '>
-                             <td id='structfield.name'><code>name</code></td><td></td></tr><tr class='stab '>
-                             <td id='structfield.instructions'><code>instructions</code></td><td></td></tr><tr class='stab '>
-                             <td id='structfield.basic_blocks'><code>basic_blocks</code></td><td></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl&lt;'f&gt; <a class='struct' href='../disassemble/struct.Function.html' title='disassemble::Function'>Function</a>&lt;'f&gt;</code></h3><div class='impl-items'><h4 id='method.build_basic_blocks' class='method'><code>fn <a href='#method.build_basic_blocks' class='fnname'>build_basic_blocks</a>(&amp;'f mut self)</code></h4>
+                             <td id='structfield.symbol'><code>symbol</code></td><td><div class='docblock'><p>The <a href="struct.Symbol.html">symbol</a> for this function. This provides the name and <code>Address</code>.</p>
+</div></td></tr><tr class='stab '>
+                             <td id='structfield.instructions'><code>instructions</code></td><td><div class='docblock'><p>The instructions that comprise this function.</p>
+</div></td></tr><tr class='stab '>
+                             <td id='structfield.basic_blocks'><code>basic_blocks</code></td><td><div class='docblock'><p>The basic blocks that comprise this function. These are algorithmically
+determined from the <code>instructions</code> via <code>fn build_basic_blocks</code>.</p>
+
+<p>The <code>basic_blocks</code> of a <code>Function</code> make up a <a href="https://en.wikipedia.org/wiki/Control_flow_graph">control flow graph</a>.</p>
+</div></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl&lt;'f&gt; <a class='struct' href='../disassemble/struct.Function.html' title='disassemble::Function'>Function</a>&lt;'f&gt;</code></h3><div class='impl-items'><h4 id='method.build_basic_blocks' class='method'><code>fn <a href='#method.build_basic_blocks' class='fnname'>build_basic_blocks</a>(&amp;'f mut self)</code></h4>
 <div class='docblock'><p>Build the actual basic blocks for this function.</p>
 
 <p>This usually happens during construction of the <code>Function</code>.</p>

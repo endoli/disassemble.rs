@@ -47,15 +47,16 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-38' class='srclink' href='../src/disassemble/src/basicblock.rs.html#21-33' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-38' class='srclink' href='../src/disassemble/src/basicblock.rs.html#24-36' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct BasicBlock&lt;'f&gt; {
     pub id: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>,
     pub name: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>,
     pub instructions: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;&amp;'f <a class='struct' href='https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;<a class='trait' href='../disassemble/trait.Instruction.html' title='disassemble::Instruction'>Instruction</a>&gt;&gt;,
     pub in_edges: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../disassemble/struct.BasicBlockRef.html' title='disassemble::BasicBlockRef'>BasicBlockRef</a>&gt;,
     pub out_edges: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../disassemble/struct.BasicBlockRef.html' title='disassemble::BasicBlockRef'>BasicBlockRef</a>&gt;,
-}</pre><div class='docblock'><p>A basic block is a set of instructions leading from
-an entry point to an exit.</p>
+}</pre><div class='docblock'><p>A <a href="https://en.wikipedia.org/wiki/Basic_block">basic block</a> is a sequence of instructions with no inward-bound
+branches except to the entry point and no outward-bound branches
+except at the exit.</p>
 </div><h2 class='fields'>Fields</h2>
 <table><tr class='stab '>
                              <td id='structfield.id'><code>id</code></td><td><div class='docblock'><p>The ID # for this basic block. This is artificial information and
