@@ -70,6 +70,8 @@
 <span id="26">26</span>
 <span id="27">27</span>
 <span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
 </pre><pre class='rust '>
 <span class='comment'>// Licensed under the Apache License, Version 2.0 &lt;LICENSE-APACHE or</span>
 <span class='comment'>// http://www.apache.org/licenses/LICENSE-2.0&gt; or the MIT license</span>
@@ -79,7 +81,9 @@
 
 <span class='kw'>use</span> <span class='ident'>address</span>::<span class='ident'>Address</span>;
 
-<span class='doccomment'>/// A symbol within an executable or library. This is a named address.</span>
+<span class='doccomment'>/// A symbol within an executable or library. This is a named [address].</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// [address]: struct.Address.html</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Symbol</span> {
     <span class='doccomment'>/// The [address] of this symbol.</span>
