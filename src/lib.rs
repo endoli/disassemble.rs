@@ -44,7 +44,7 @@
 //!
 //! * Actually implement building the CFG from the instructions.
 //! * Implement DOT output for the CFG. This can probably be done with the
-//!   help of `petgraph`.
+//!   help of [`petgraph`].
 //! * HTML output modes?
 //! * Implement loop finding. (Havlak)
 //! * Implement the [Capstone Engine] backend as a separate crate.
