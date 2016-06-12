@@ -18,7 +18,7 @@
 ///
 /// [`Function`]: struct.Function.html
 /// [`Instruction`]: trait.Instruction.html
-#[derive(Clone,Copy,Debug)]
+#[derive(Clone,Copy,Debug,Eq,Hash,Ord,PartialEq,PartialOrd)]
 pub struct Address {
     address: usize,
 }
@@ -27,5 +27,19 @@ impl Address {
     /// Construct an `Address`.
     pub fn new(address: usize) -> Self {
         Address { address: address }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::Address;
+
+    #[test]
+    fn address_comparison() {
+        let addr1 = Address::new(5);
+        let addr2 = Address::new(3);
+        let addr3 = Address::new(5);
+        assert!(addr2 < addr1);
+        assert_eq!(addr1, addr3);
     }
 }
