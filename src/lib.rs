@@ -42,8 +42,8 @@
 //! In the future, we want to extend this library to support a number of
 //! additional features:
 //!
-//! * Actually implement building the CFG from the instructions.
-//! * Implement DOT output for the CFG. This can probably be done with the
+//! * Actually implement building the [`CFG`] from the instructions.
+//! * Implement DOT output for the [`CFG`]. This can probably be done with the
 //!   help of [`petgraph`].
 //! * HTML output modes?
 //! * Implement loop finding. (Havlak)
@@ -58,6 +58,7 @@
 //! Contributions are welcome.
 //!
 //! [Capstone Engine]: http://www.capstone-engine.org/
+//! [`CFG`]: struct.CFG.html
 //! [`Function`]: struct.Function.html
 //! [`Instruction`]: trait.Instruction.html
 //! [petgraph]: https://crates.io/crates/petgraph
