@@ -86,6 +86,79 @@ pub use self::symbol::Symbol;
 
 #[cfg(test)]
 mod tests {
-    #[test]
-    fn it_works() {}
+    //! Test Instructions
+    //!
+    //! This provides some test implementations of `Instruction` for
+    //! use in testing out this crate without having to hook up to
+    //! a real disassembler.
+
+    use address::Address;
+    use instruction::Instruction;
+
+    /// A named register location.
+    #[derive(Clone,Copy,Debug)]
+    pub struct Register {
+        name: i32,
+    }
+
+    impl Register {
+        pub fn new(name: i32) -> Self {
+            Register { name: name }
+        }
+    }
+
+    /// Opcodes that we'll use as instructions.
+    /// The first address value in each is their
+    /// address in 'memory'.
+    #[allow(dead_code)]
+    #[derive(Debug)]
+    pub enum Opcode {
+        /// Add 2 register values and place the result in a third.
+        Add(Address, Register, Register, Register),
+        /// Multiply 2 register values and place the result in a third.
+        Mul(Address, Register, Register, Register),
+        /// Jump to address if the register value is true.
+        CJmp(Address, Register, Address),
+        /// Jump to `address`.
+        Jmp(Address, Address),
+        /// Call the subroutine at `address`.
+        Call(Address, Address),
+        /// Return from this function.
+        Ret(Address),
+    }
+
+    impl Instruction for Opcode {
+        fn address(&self) -> Address {
+            match *self {
+                Opcode::Add(addr, _, _, _) => addr,
+                Opcode::Mul(addr, _, _, _) => addr,
+                Opcode::CJmp(addr, _, _) => addr,
+                Opcode::Jmp(addr, _) => addr,
+                Opcode::Call(addr, _) => addr,
+                Opcode::Ret(addr) => addr,
+            }
+        }
+
+        fn is_call(&self) -> bool {
+            match *self {
+                Opcode::Call(_, _) => true,
+                _ => false,
+            }
+        }
+
+        fn is_local_jump(&self) -> bool {
+            match *self {
+                Opcode::CJmp(_, _, _) => true,
+                Opcode::Jmp(_, _) => true,
+                _ => false,
+            }
+        }
+
+        fn is_return(&self) -> bool {
+            match *self {
+                Opcode::Ret(_) => true,
+                _ => false,
+            }
+        }
+    }
 }
