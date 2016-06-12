@@ -20,12 +20,12 @@
 /// [`Instruction`]: trait.Instruction.html
 #[derive(Clone,Copy,Debug,Eq,Hash,Ord,PartialEq,PartialOrd)]
 pub struct Address {
-    address: usize,
+    address: u64,
 }
 
 impl Address {
     /// Construct an `Address`.
-    pub fn new(address: usize) -> Self {
+    pub fn new(address: u64) -> Self {
         Address { address: address }
     }
 }
