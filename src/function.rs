@@ -4,8 +4,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use basicblock::BasicBlock;
+use basicblock::{BasicBlock, BasicBlockEdge};
 use instruction::Instruction;
+use petgraph::graph::{Graph, NodeIndex};
 use symbol::Symbol;
 
 /// A function within a program.
@@ -20,32 +21,31 @@ pub struct Function<'f> {
     ///
     /// [instructions]: trait.Instruction.html
     pub instructions: Vec<Box<Instruction>>,
-    /// The [basic blocks] that comprise this function. These are algorithmically
-    /// determined from the `instructions` via `fn build_basic_blocks`.
-    ///
-    /// The `basic_blocks` of a `Function` make up a [control flow graph].
+    /// The [control flow graph] for this function. This is build from the
+    /// `instructions` via `fn build_cfg`. It is made up of [basic blocks].
     ///
     /// [basic blocks]: struct.BasicBlock.html
     /// [control flow graph]: https://en.wikipedia.org/wiki/Control_flow_graph
-    pub basic_blocks: Vec<BasicBlock<'f>>,
-    /// The entry [`BasicBlock`] for this function.
+    pub cfg: Option<Graph<BasicBlock<'f>, BasicBlockEdge>>,
+    /// The `NodeIndex` for the entry [`BasicBlock`] for this function.
     ///
     /// [`BasicBlock`]: struct.BasicBlock.html
-    pub entry_block: Option<&'f BasicBlock<'f>>,
+    pub entry_block: Option<NodeIndex>,
 }
 
 impl<'f> Function<'f> {
     /// Build the actual basic blocks for this function.
     ///
     /// This usually happens during construction of the `Function`.
-    pub fn build_basic_blocks(&'f mut self) {
+    pub fn build_cfg(&'f mut self) {
         // For now, let's just put all instructions into a single basic
         // block. In the future, we'll implement this correctly.
-        let mut bb = BasicBlock::new(self.basic_blocks.len(), None);
+        let mut cfg = Graph::new();
+        let mut bb = BasicBlock::new(None);
         for inst in &self.instructions {
             bb.instructions.push(inst);
         }
-        self.basic_blocks.push(bb);
-        self.entry_block = Some(&self.basic_blocks[0]);
+        self.entry_block = Some(cfg.add_node(bb));
+        self.cfg = Some(cfg);
     }
 }

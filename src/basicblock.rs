@@ -37,47 +37,19 @@ pub enum EdgeDirection {
 /// [basic block]: https://en.wikipedia.org/wiki/Basic_block
 #[derive(Debug)]
 pub struct BasicBlock<'f> {
-    /// The ID # for this basic block. This is artificial information and
-    /// not something from the disassembly.
-    pub id: usize,
     /// The name of the basic block. Not all blocks have meaningful names.
     pub name: Option<String>,
     /// The instructions within this basic block.
     pub instructions: Vec<&'f Box<Instruction>>,
-    /// The basic blocks that point to this one.
-    pub in_edges: Vec<BasicBlockEdge<'f>>,
-    /// The basic blocks which can be exited to from this one.
-    pub out_edges: Vec<BasicBlockEdge<'f>>,
 }
 
 impl<'f> BasicBlock<'f> {
     /// Construct a new `BasicBlock`.
-    pub fn new(id: usize, name: Option<&str>) -> Self {
+    pub fn new(name: Option<&str>) -> Self {
         BasicBlock {
-            id: id,
             name: name.map(|s| s.to_owned()),
             instructions: vec![],
-            in_edges: vec![],
-            out_edges: vec![],
         }
-    }
-
-    /// Add an edge that points to this basic block.
-    pub fn add_in_edge(&'f mut self, bb: &'f BasicBlock<'f>, edge_type: EdgeType) {
-        self.in_edges.push(BasicBlockEdge {
-            edge_type: edge_type,
-            direction: EdgeDirection::In,
-            other_bb: bb,
-        });
-    }
-
-    /// Add an edge that points from this basic block to another.
-    pub fn add_out_edge(&'f mut self, bb: &'f BasicBlock<'f>, edge_type: EdgeType) {
-        self.out_edges.push(BasicBlockEdge {
-            edge_type: edge_type,
-            direction: EdgeDirection::Out,
-            other_bb: bb,
-        });
     }
 }
 
@@ -88,7 +60,7 @@ impl<'f> BasicBlock<'f> {
 ///
 /// [basic blocks]: struct.BasicBlock.html
 #[derive(Debug)]
-pub struct BasicBlockEdge<'f> {
+pub struct BasicBlockEdge {
     /// Is this edge taken [conditionally or unconditionally]?
     ///
     /// [conditionally or unconditionally]: enum.EdgeType.html
@@ -97,16 +69,4 @@ pub struct BasicBlockEdge<'f> {
     ///
     /// [inbound or outbound]: enum.EdgeDirection.html
     pub direction: EdgeDirection,
-    /// What is the other [`BasicBlock`] involved in this edge?
-    ///
-    /// If the `direction` is [`EdgeDirection::In`], then this `other_bb`
-    /// will be the source bb and this bb will be the destination.
-    ///
-    /// If the `direction` is [`EdgeDirection::Out`], then this bb will
-    /// be the source and `other_bb` will be the destination.
-    ///
-    /// [`BasicBlock`]: struct.BasicBlock.html
-    /// [`EdgeDirection::In`]: enum.EdgeDirection.html
-    /// [`EdgeDirection::Out`]: enum.EdgeDirection.html
-    pub other_bb: &'f BasicBlock<'f>,
 }

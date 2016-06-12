@@ -43,8 +43,6 @@
 //! additional features:
 //!
 //! * Actually implement building the CFG from the instructions.
-//! * Switch to using the [petgraph] crate for the CFG and store that on
-//!   [`Function`] instead of having the `Function` be the CFG.
 //! * Implement DOT output for the CFG. This can probably be done with the
 //!   help of `petgraph`.
 //! * HTML output modes?
@@ -69,6 +67,8 @@
 #![deny(trivial_numeric_casts,
         unsafe_code, unstable_features,
         unused_import_braces, unused_qualifications)]
+
+extern crate petgraph;
 
 mod address;
 mod basicblock;
