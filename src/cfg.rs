@@ -31,5 +31,13 @@ impl<'f> CFG<'f> {
             entry_block: None,
         }
     }
-    pub fn build(&mut self, _instructions: &Vec<Box<Instruction>>) {}
+    /// Build the CFG from the [`instructions`].
+    ///
+    /// [`instructions`]: trait.Instruction.html
+    pub fn build(&mut self, instructions: &Vec<Box<Instruction>>) {
+        if !instructions.is_empty() {
+            let bb = BasicBlock::new(None, instructions[0].address());
+            self.entry_block = Some(self.graph.add_node(bb));
+        }
+    }
 }
