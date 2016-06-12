@@ -30,10 +30,12 @@ pub struct Function<'f> {
 impl<'f> Function<'f> {
     /// Construct a new function
     pub fn new(symbol: Symbol, instructions: Vec<Box<Instruction>>) -> Self {
-        Function {
+        let mut f = Function {
             symbol: symbol,
             instructions: instructions,
             cfg: CFG::new(),
-        }
+        };
+        f.cfg.build(&f.instructions);
+        f
     }
 }

@@ -5,6 +5,7 @@
 // except according to those terms.
 
 use basicblock::{BasicBlock, BasicBlockEdge};
+use instruction::Instruction;
 use petgraph::graph::{Graph, NodeIndex};
 
 /// A [control flow graph].
@@ -30,4 +31,5 @@ impl<'f> CFG<'f> {
             entry_block: None,
         }
     }
+    pub fn build(&mut self, _instructions: &Vec<Box<Instruction>>) {}
 }
