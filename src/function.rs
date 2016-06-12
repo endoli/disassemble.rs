@@ -41,7 +41,7 @@ impl<'f> Function<'f> {
         // For now, let's just put all instructions into a single basic
         // block. In the future, we'll implement this correctly.
         let mut cfg = Graph::new();
-        let mut bb = BasicBlock::new(None);
+        let mut bb = BasicBlock::new(None, self.symbol.address);
         for inst in &self.instructions {
             bb.instructions.push(inst);
         }

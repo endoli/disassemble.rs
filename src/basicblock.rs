@@ -4,6 +4,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use address::Address;
 use instruction::Instruction;
 
 /// When is this edge taken? Conditionally or unconditionally?
@@ -39,15 +40,18 @@ pub enum EdgeDirection {
 pub struct BasicBlock<'f> {
     /// The name of the basic block. Not all blocks have meaningful names.
     pub name: Option<String>,
+    /// The address of the first instruction in the basic block.
+    pub address: Address,
     /// The instructions within this basic block.
     pub instructions: Vec<&'f Box<Instruction>>,
 }
 
 impl<'f> BasicBlock<'f> {
     /// Construct a new `BasicBlock`.
-    pub fn new(name: Option<&str>) -> Self {
+    pub fn new(name: Option<&str>, address: Address) -> Self {
         BasicBlock {
             name: name.map(|s| s.to_owned()),
+            address: address,
             instructions: vec![],
         }
     }
