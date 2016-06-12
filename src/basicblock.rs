@@ -6,6 +6,7 @@
 
 use address::Address;
 use instruction::Instruction;
+use petgraph::EdgeDirection;
 
 /// When is this edge taken? Conditionally or unconditionally?
 #[derive(Clone,Copy,Debug,Eq,PartialEq)]
@@ -16,19 +17,6 @@ pub enum EdgeType {
     ConditionalFalse,
     /// This is edge is always taken.
     Unconditional,
-}
-
-/// Which direction is this edge going? Inwards or outwards from this `BasicBlock`?
-#[derive(Clone,Copy,Debug,Eq,PartialEq)]
-pub enum EdgeDirection {
-    /// This is an inbound edge with this [`BasicBlock`] as the target.
-    ///
-    /// [`BasicBlock`]: struct.BasicBlock.html
-    In,
-    /// This is an outbound edge with this [`BasicBlock`] as the source.
-    ///
-    /// [`BasicBlock`]: struct.BasicBlock.html
-    Out,
 }
 
 /// A [basic block] is a sequence of instructions with no inward-bound
@@ -69,8 +57,6 @@ pub struct BasicBlockEdge {
     ///
     /// [conditionally or unconditionally]: enum.EdgeType.html
     pub edge_type: EdgeType,
-    /// Is this an [inbound or outbound] edge?
-    ///
-    /// [inbound or outbound]: enum.EdgeDirection.html
+    /// Is this an inbound or outbound edge?
     pub direction: EdgeDirection,
 }

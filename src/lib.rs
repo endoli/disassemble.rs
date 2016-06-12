@@ -77,7 +77,7 @@ mod instruction;
 mod symbol;
 
 pub use self::address::Address;
-pub use self::basicblock::{BasicBlock, BasicBlockEdge, EdgeDirection, EdgeType};
+pub use self::basicblock::{BasicBlock, BasicBlockEdge, EdgeType};
 pub use self::function::Function;
 pub use self::instruction::Instruction;
 pub use self::symbol::Symbol;
