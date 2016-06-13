@@ -9,6 +9,11 @@
 /// This is used to provide a location of a [`Function`], [`Instruction`],
 /// or other item.
 ///
+/// The meaning of this address is flexibly interpreted by the rest of this
+/// library as the meaning depends upon the application embedding and using
+/// this library. It may be an actual machine address or it might be something
+/// as simple as the offset of an instruction into an array.
+///
 /// XXX: Should this have any indication for what type of address it is?
 ///      An address might be an address within a file, a resolved address
 ///      after being loaded, etc.
