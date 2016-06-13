@@ -123,68 +123,57 @@ mod tests {
     use address::Address;
     use instruction::Instruction;
 
-    /// A named register location.
-    #[derive(Clone,Copy,Debug)]
-    pub struct Register {
-        name: i32,
+    /// Opcodes that we'll use as instructions.
+    #[allow(dead_code,missing_docs)]
+    #[derive(Debug)]
+    pub enum Opcode {
+        Add,
+        Mul,
+        CJmp,
+        Jmp,
+        Call,
+        Ret,
     }
 
-    impl Register {
-        pub fn new(name: i32) -> Self {
-            Register { name: name }
+    #[derive(Debug)]
+    pub struct TestInstruction {
+        address: Address,
+        opcode: Opcode,
+    }
+
+    impl TestInstruction {
+        /// Construct a `TestInstruction`.
+        pub fn new(address: u64, opcode: Opcode) -> Box<Self> {
+            Box::new(TestInstruction {
+                address: Address::new(address),
+                opcode: opcode,
+            })
         }
     }
 
-    /// Opcodes that we'll use as instructions.
-    /// The first address value in each is their
-    /// address in 'memory'.
-    #[allow(dead_code)]
-    #[derive(Debug)]
-    pub enum Opcode {
-        /// Add 2 register values and place the result in a third.
-        Add(Address, Register, Register, Register),
-        /// Multiply 2 register values and place the result in a third.
-        Mul(Address, Register, Register, Register),
-        /// Jump to address if the register value is true.
-        CJmp(Address, Register, Address),
-        /// Jump to `address`.
-        Jmp(Address, Address),
-        /// Call the subroutine at `address`.
-        Call(Address, Address),
-        /// Return from this function.
-        Ret(Address),
-    }
-
-    impl Instruction for Opcode {
+    impl Instruction for TestInstruction {
         fn address(&self) -> Address {
-            match *self {
-                Opcode::Add(addr, _, _, _) => addr,
-                Opcode::Mul(addr, _, _, _) => addr,
-                Opcode::CJmp(addr, _, _) => addr,
-                Opcode::Jmp(addr, _) => addr,
-                Opcode::Call(addr, _) => addr,
-                Opcode::Ret(addr) => addr,
-            }
+            self.address
         }
 
         fn is_call(&self) -> bool {
-            match *self {
-                Opcode::Call(_, _) => true,
+            match self.opcode {
+                Opcode::Call => true,
                 _ => false,
             }
         }
 
         fn is_local_jump(&self) -> bool {
-            match *self {
-                Opcode::CJmp(_, _, _) => true,
-                Opcode::Jmp(_, _) => true,
+            match self.opcode {
+                Opcode::CJmp => true,
+                Opcode::Jmp => true,
                 _ => false,
             }
         }
 
         fn is_return(&self) -> bool {
-            match *self {
-                Opcode::Ret(_) => true,
+            match self.opcode {
+                Opcode::Ret => true,
                 _ => false,
             }
         }
