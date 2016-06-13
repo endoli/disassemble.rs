@@ -47,12 +47,11 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-123' class='srclink' href='../src/disassemble/src/function.rs.html#13-35' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-159' class='srclink' href='../src/disassemble/src/function.rs.html#12-28' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Function&lt;'f&gt; {
     pub symbol: <a class='struct' href='../disassemble/struct.Symbol.html' title='disassemble::Symbol'>Symbol</a>,
     pub instructions: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;<a class='trait' href='../disassemble/trait.Instruction.html' title='disassemble::Instruction'>Instruction</a>&gt;&gt;,
-    pub basic_blocks: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../disassemble/struct.BasicBlock.html' title='disassemble::BasicBlock'>BasicBlock</a>&lt;'f&gt;&gt;,
-    pub entry_block: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;'f <a class='struct' href='../disassemble/struct.BasicBlock.html' title='disassemble::BasicBlock'>BasicBlock</a>&lt;'f&gt;&gt;,
+    pub cfg: <a class='struct' href='../disassemble/struct.CFG.html' title='disassemble::CFG'>CFG</a>&lt;'f&gt;,
 }</pre><div class='docblock'><p>A function within a program.</p>
 </div><h2 class='fields'>Fields</h2>
 <table><tr class='stab '>
@@ -60,18 +59,11 @@
 </div></td></tr><tr class='stab '>
                              <td id='structfield.instructions'><code>instructions</code></td><td><div class='docblock'><p>The <a href="trait.Instruction.html">instructions</a> that comprise this function.</p>
 </div></td></tr><tr class='stab '>
-                             <td id='structfield.basic_blocks'><code>basic_blocks</code></td><td><div class='docblock'><p>The <a href="struct.BasicBlock.html">basic blocks</a> that comprise this function. These are algorithmically
-determined from the <code>instructions</code> via <code>fn build_basic_blocks</code>.</p>
-
-<p>The <code>basic_blocks</code> of a <code>Function</code> make up a <a href="https://en.wikipedia.org/wiki/Control_flow_graph">control flow graph</a>.</p>
-</div></td></tr><tr class='stab '>
-                             <td id='structfield.entry_block'><code>entry_block</code></td><td><div class='docblock'><p>The entry <a href="struct.BasicBlock.html"><code>BasicBlock</code></a> for this function.</p>
-</div></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl&lt;'f&gt; <a class='struct' href='../disassemble/struct.Function.html' title='disassemble::Function'>Function</a>&lt;'f&gt;</code></h3><div class='impl-items'><h4 id='method.build_basic_blocks' class='method'><code>fn <a href='#method.build_basic_blocks' class='fnname'>build_basic_blocks</a>(&amp;'f mut self)</code></h4>
-<div class='docblock'><p>Build the actual basic blocks for this function.</p>
-
-<p>This usually happens during construction of the <code>Function</code>.</p>
-</div></div><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl&lt;'f&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../disassemble/struct.Function.html' title='disassemble::Function'>Function</a>&lt;'f&gt;</code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
-</div></section>
+                             <td id='structfield.cfg'><code>cfg</code></td><td><div class='docblock'><p>The <a href="https://en.wikipedia.org/wiki/Control_flow_graph">control flow graph</a> for this function. This is build from the
+<code>instructions</code>. It is made up of <a href="struct.BasicBlock.html">basic blocks</a>.</p>
+</div></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl&lt;'f&gt; <a class='struct' href='../disassemble/struct.Function.html' title='disassemble::Function'>Function</a>&lt;'f&gt;</code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(symbol: <a class='struct' href='../disassemble/struct.Symbol.html' title='disassemble::Symbol'>Symbol</a>, instructions: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;<a class='trait' href='../disassemble/trait.Instruction.html' title='disassemble::Instruction'>Instruction</a>&gt;&gt;) -&gt; Self</code></h4>
+<div class='docblock'><p>Construct a new function</p>
+</div></div></section>
     <section id='search' class="content hidden"></section>
 
     <section class="footer"></section>

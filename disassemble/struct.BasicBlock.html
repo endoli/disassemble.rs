@@ -47,34 +47,23 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-71' class='srclink' href='../src/disassemble/src/basicblock.rs.html#39-51' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-107' class='srclink' href='../src/disassemble/src/basicblock.rs.html#28-35' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct BasicBlock&lt;'f&gt; {
-    pub id: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>,
     pub name: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;,
+    pub address: <a class='struct' href='../disassemble/struct.Address.html' title='disassemble::Address'>Address</a>,
     pub instructions: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;&amp;'f <a class='struct' href='https://doc.rust-lang.org/nightly/alloc/boxed/struct.Box.html' title='alloc::boxed::Box'>Box</a>&lt;<a class='trait' href='../disassemble/trait.Instruction.html' title='disassemble::Instruction'>Instruction</a>&gt;&gt;,
-    pub in_edges: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../disassemble/struct.BasicBlockEdge.html' title='disassemble::BasicBlockEdge'>BasicBlockEdge</a>&lt;'f&gt;&gt;,
-    pub out_edges: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../disassemble/struct.BasicBlockEdge.html' title='disassemble::BasicBlockEdge'>BasicBlockEdge</a>&lt;'f&gt;&gt;,
 }</pre><div class='docblock'><p>A <a href="https://en.wikipedia.org/wiki/Basic_block">basic block</a> is a sequence of instructions with no inward-bound
 branches except to the entry point and no outward-bound branches
 except at the exit.</p>
 </div><h2 class='fields'>Fields</h2>
 <table><tr class='stab '>
-                             <td id='structfield.id'><code>id</code></td><td><div class='docblock'><p>The ID # for this basic block. This is artificial information and
-not something from the disassembly.</p>
-</div></td></tr><tr class='stab '>
                              <td id='structfield.name'><code>name</code></td><td><div class='docblock'><p>The name of the basic block. Not all blocks have meaningful names.</p>
 </div></td></tr><tr class='stab '>
+                             <td id='structfield.address'><code>address</code></td><td><div class='docblock'><p>The address of the first instruction in the basic block.</p>
+</div></td></tr><tr class='stab '>
                              <td id='structfield.instructions'><code>instructions</code></td><td><div class='docblock'><p>The instructions within this basic block.</p>
-</div></td></tr><tr class='stab '>
-                             <td id='structfield.in_edges'><code>in_edges</code></td><td><div class='docblock'><p>The basic blocks that point to this one.</p>
-</div></td></tr><tr class='stab '>
-                             <td id='structfield.out_edges'><code>out_edges</code></td><td><div class='docblock'><p>The basic blocks which can be exited to from this one.</p>
-</div></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl&lt;'f&gt; <a class='struct' href='../disassemble/struct.BasicBlock.html' title='disassemble::BasicBlock'>BasicBlock</a>&lt;'f&gt;</code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(id: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.usize.html'>usize</a>, name: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>&gt;) -&gt; Self</code></h4>
+</div></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl&lt;'f&gt; <a class='struct' href='../disassemble/struct.BasicBlock.html' title='disassemble::BasicBlock'>BasicBlock</a>&lt;'f&gt;</code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(name: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;&amp;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.str.html'>str</a>&gt;, address: <a class='struct' href='../disassemble/struct.Address.html' title='disassemble::Address'>Address</a>) -&gt; Self</code></h4>
 <div class='docblock'><p>Construct a new <code>BasicBlock</code>.</p>
-</div><h4 id='method.add_in_edge' class='method'><code>fn <a href='#method.add_in_edge' class='fnname'>add_in_edge</a>(&amp;'f mut self, bb: &amp;'f <a class='struct' href='../disassemble/struct.BasicBlock.html' title='disassemble::BasicBlock'>BasicBlock</a>&lt;'f&gt;, edge_type: <a class='enum' href='../disassemble/enum.EdgeType.html' title='disassemble::EdgeType'>EdgeType</a>)</code></h4>
-<div class='docblock'><p>Add an edge that points to this basic block.</p>
-</div><h4 id='method.add_out_edge' class='method'><code>fn <a href='#method.add_out_edge' class='fnname'>add_out_edge</a>(&amp;'f mut self, bb: &amp;'f <a class='struct' href='../disassemble/struct.BasicBlock.html' title='disassemble::BasicBlock'>BasicBlock</a>&lt;'f&gt;, edge_type: <a class='enum' href='../disassemble/enum.EdgeType.html' title='disassemble::EdgeType'>EdgeType</a>)</code></h4>
-<div class='docblock'><p>Add an edge that points from this basic block to another.</p>
 </div></div><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl&lt;'f&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../disassemble/struct.BasicBlock.html' title='disassemble::BasicBlock'>BasicBlock</a>&lt;'f&gt;</code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
 </div></section>
     <section id='search' class="content hidden"></section>

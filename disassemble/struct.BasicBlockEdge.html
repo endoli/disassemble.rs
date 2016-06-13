@@ -47,11 +47,10 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-104' class='srclink' href='../src/disassemble/src/basicblock.rs.html#91-112' title='goto source code'>[src]</a></span></h1>
-<pre class='rust struct'>pub struct BasicBlockEdge&lt;'f&gt; {
+               </span><a id='src-128' class='srclink' href='../src/disassemble/src/basicblock.rs.html#55-62' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct BasicBlockEdge {
     pub edge_type: <a class='enum' href='../disassemble/enum.EdgeType.html' title='disassemble::EdgeType'>EdgeType</a>,
-    pub direction: <a class='enum' href='../disassemble/enum.EdgeDirection.html' title='disassemble::EdgeDirection'>EdgeDirection</a>,
-    pub other_bb: &amp;'f <a class='struct' href='../disassemble/struct.BasicBlock.html' title='disassemble::BasicBlock'>BasicBlock</a>&lt;'f&gt;,
+    pub direction: <a class='enum' href='../petgraph/enum.EdgeDirection.html' title='petgraph::EdgeDirection'>EdgeDirection</a>,
 }</pre><div class='docblock'><p>Information about an edge between 2 <a href="struct.BasicBlock.html">basic blocks</a>.</p>
 
 <p>This represents a branch, jump or other form of control flow
@@ -60,16 +59,8 @@ transfer within the control flow graph.</p>
 <table><tr class='stab '>
                              <td id='structfield.edge_type'><code>edge_type</code></td><td><div class='docblock'><p>Is this edge taken <a href="enum.EdgeType.html">conditionally or unconditionally</a>?</p>
 </div></td></tr><tr class='stab '>
-                             <td id='structfield.direction'><code>direction</code></td><td><div class='docblock'><p>Is this an <a href="enum.EdgeDirection.html">inbound or outbound</a> edge?</p>
-</div></td></tr><tr class='stab '>
-                             <td id='structfield.other_bb'><code>other_bb</code></td><td><div class='docblock'><p>What is the other <a href="struct.BasicBlock.html"><code>BasicBlock</code></a> involved in this edge?</p>
-
-<p>If the <code>direction</code> is <a href="enum.EdgeDirection.html"><code>EdgeDirection::In</code></a>, then this <code>other_bb</code>
-will be the source bb and this bb will be the destination.</p>
-
-<p>If the <code>direction</code> is <a href="enum.EdgeDirection.html"><code>EdgeDirection::Out</code></a>, then this bb will
-be the source and <code>other_bb</code> will be the destination.</p>
-</div></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl&lt;'f&gt; <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../disassemble/struct.BasicBlockEdge.html' title='disassemble::BasicBlockEdge'>BasicBlockEdge</a>&lt;'f&gt;</code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
+                             <td id='structfield.direction'><code>direction</code></td><td><div class='docblock'><p>Is this an inbound or outbound edge?</p>
+</div></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='struct' href='../disassemble/struct.BasicBlockEdge.html' title='disassemble::BasicBlockEdge'>BasicBlockEdge</a></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
 </div></section>
     <section id='search' class="content hidden"></section>
 

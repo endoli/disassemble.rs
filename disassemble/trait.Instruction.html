@@ -47,7 +47,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-151' class='srclink' href='../src/disassemble/src/instruction.rs.html#15-32' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-174' class='srclink' href='../src/disassemble/src/instruction.rs.html#19-48' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait Instruction: <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> {
     fn <a href='#tymethod.address' class='fnname'>address</a>(&amp;self) -&gt; <a class='struct' href='../disassemble/struct.Address.html' title='disassemble::Address'>Address</a>;
     fn <a href='#tymethod.is_call' class='fnname'>is_call</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>;
@@ -60,10 +60,17 @@
 <p>This trait will be implemented for a variety of backends and
 provides the general means by which the rest of the code in this
 library can be re-used.</p>
+
+<p>This is intended to be fairly generic and is how other parts
+of this library query information that is specific to a given
+platform and body of generated code.</p>
 </div>
             <h2 id='required-methods'>Required Methods</h2>
             <div class='methods'>
-        <h3 id='tymethod.address' class='method stab '><code>fn <a href='#tymethod.address' class='fnname'>address</a>(&amp;self) -&gt; <a class='struct' href='../disassemble/struct.Address.html' title='disassemble::Address'>Address</a></code></h3><div class='docblock'><p>The address of this <code>Instruction</code>.</p>
+        <h3 id='tymethod.address' class='method stab '><code>fn <a href='#tymethod.address' class='fnname'>address</a>(&amp;self) -&gt; <a class='struct' href='../disassemble/struct.Address.html' title='disassemble::Address'>Address</a></code></h3><div class='docblock'><p>The <a href="struct.Address.html"><code>address</code></a> of this <code>Instruction</code>.</p>
+
+<p>The <a href="struct.Address.html"><code>address</code></a> of an instruction must be unique within a
+<a href="struct.Function.html"><code>function</code></a>.</p>
 </div><h3 id='tymethod.is_call' class='method stab '><code>fn <a href='#tymethod.is_call' class='fnname'>is_call</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h3><div class='docblock'><p>Does this instruction represent a call?</p>
 </div><h3 id='tymethod.is_local_jump' class='method stab '><code>fn <a href='#tymethod.is_local_jump' class='fnname'>is_local_jump</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h3><div class='docblock'><p>Does this instruction represent a local jump?</p>
 </div><h3 id='tymethod.is_return' class='method stab '><code>fn <a href='#tymethod.is_return' class='fnname'>is_return</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h3><div class='docblock'><p>Does this instruction represent a function return?</p>
@@ -71,6 +78,10 @@ library can be re-used.</p>
             <h2 id='provided-methods'>Provided Methods</h2>
             <div class='methods'>
         <h3 id='method.is_block_terminator' class='method stab '><code>fn <a href='#method.is_block_terminator' class='fnname'>is_block_terminator</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h3><div class='docblock'><p>Does this instruction terminate a <code>BasicBlock</code>?</p>
+
+<p>This is used when constructing a [control flow graph]
+to help break a sequence of instructions into basic
+blocks.</p>
 </div></div>
         <h2 id='implementors'>Implementors</h2>
         <ul class='item-list' id='implementors-list'>

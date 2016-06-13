@@ -47,16 +47,43 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-0' class='srclink' href='../src/disassemble/src/lib.rs.html#7-89' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-0' class='srclink' href='../src/disassemble/src/lib.rs.html#7-192' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'>
 <h1 id='disassemble' class='section-header'><a href='#disassemble'>Disassemble</a></h1>
 <p>This crate provides basic functionality for working with
-disassembled code.</p>
+disassembled code. It provides (or will provide) functionality
+for performing:</p>
+
+<ul>
+<li>Working with code that has already been compiled to machine
+code for any CPU, bytecode, compiler IR or JIT compiler
+output like that of V8 or the JVM. You provide an adapter
+to teach <a href="trait.Instruction.html"><code>Instruction</code></a> how to report the correct information
+for your generated code.</li>
+<li>Reconstructing the <a href="https://en.wikipedia.org/wiki/Control_flow_graph">control flow graph</a> from a body of compiled
+code.</li>
+<li><strong>(Future)</strong> Reconstructing loops and higher level control
+flow constructs.</li>
+<li><strong>(Future)</strong> Performing <a href="https://en.wikipedia.org/wiki/Data-flow_analysis">data flow analysis</a>.</li>
+<li><strong>(Future)</strong> Generating HTML and other rich output formats
+to assist in visualizing structure and higher level presentations
+of the data derived from the generated code.</li>
+<li><strong>(Future)</strong> Writing decompilers that generate C or
+other languages from lower level generated code.</li>
+<li><strong>(Future)</strong> Writing tools for reverse engineering. Many tools
+for reverse engineering require extracting and inferring higher
+level structure from the low level generated code. This crate
+provides those capabilities for re-use by anyone.</li>
+<li><strong>(Future)</strong> Writing views that display disassembled code for
+debuggers, profilers and other systems level tools.</li>
+</ul>
 
 <p>The actual disassembly with the implementation of <a href="trait.Instruction.html"><code>Instruction</code></a>
 and other elements of the system will be provided by other
 crates that integrate with other systems, such as the <a href="http://www.capstone-engine.org/">Capstone
-Engine</a>.</p>
+Engine</a>. This crate is written such that it should work with
+nearly any machine code, VM bytecode or JIT compiler output,
+given an appropriate implementation of <a href="trait.Instruction.html"><code>Instruction</code></a>.</p>
 
 <p>It is possible (likely?) that some functionality from within
 this crate may move in the future to a separate crate for broader
@@ -82,11 +109,9 @@ top of your own crate:</p>
 additional features:</p>
 
 <ul>
-<li>Actually implement building the CFG from the instructions.</li>
-<li>Switch to using the <a href="https://crates.io/crates/petgraph">petgraph</a> crate for the CFG and store that on
-<a href="struct.Function.html"><code>Function</code></a> instead of having the <code>Function</code> be the CFG.</li>
-<li>Implement DOT output for the CFG. This can probably be done with the
-help of <code>petgraph</code>.</li>
+<li>Actually implement building the <a href="struct.CFG.html"><code>CFG</code></a> from the instructions.</li>
+<li>Implement DOT output for the <a href="struct.CFG.html"><code>CFG</code></a>. This can probably be done with the
+help of [<code>petgraph</code>].</li>
 <li>HTML output modes?</li>
 <li>Implement loop finding. (Havlak)</li>
 <li>Implement the <a href="http://www.capstone-engine.org/">Capstone Engine</a> backend as a separate crate.</li>
@@ -124,6 +149,13 @@ except at the exit.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
+                           <td><a class='struct' href='struct.CFG.html'
+                                  title='disassemble::CFG'>CFG</a></td>
+                           <td class='docblock short'>
+                                <p>A <a href="https://en.wikipedia.org/wiki/Control_flow_graph">control flow graph</a>.</p>
+                           </td>
+                       </tr>
+                       <tr class=' module-item'>
                            <td><a class='struct' href='struct.Function.html'
                                   title='disassemble::Function'>Function</a></td>
                            <td class='docblock short'>
@@ -138,13 +170,6 @@ except at the exit.</p>
                            </td>
                        </tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
-                       <tr class=' module-item'>
-                           <td><a class='enum' href='enum.EdgeDirection.html'
-                                  title='disassemble::EdgeDirection'>EdgeDirection</a></td>
-                           <td class='docblock short'>
-                                <p>Which direction is this edge going? Inwards or outwards from this <code>BasicBlock</code>?</p>
-                           </td>
-                       </tr>
                        <tr class=' module-item'>
                            <td><a class='enum' href='enum.EdgeType.html'
                                   title='disassemble::EdgeType'>EdgeType</a></td>
