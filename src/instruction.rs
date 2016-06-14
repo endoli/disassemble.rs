@@ -45,4 +45,7 @@ pub trait Instruction: fmt::Debug {
 
     /// Does this instruction represent a function return?
     fn is_return(&self) -> bool;
+
+    /// If this is a call or local jump, what is the target address?
+    fn target_address(&self) -> Option<Address>;
 }

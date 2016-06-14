@@ -129,9 +129,9 @@ mod tests {
     pub enum Opcode {
         Add,
         Mul,
-        CJmp,
-        Jmp,
-        Call,
+        CJmp(Address),
+        Jmp(Address),
+        Call(Address),
         Ret,
     }
 
@@ -158,15 +158,15 @@ mod tests {
 
         fn is_call(&self) -> bool {
             match self.opcode {
-                Opcode::Call => true,
+                Opcode::Call(..) => true,
                 _ => false,
             }
         }
 
         fn is_local_jump(&self) -> bool {
             match self.opcode {
-                Opcode::CJmp => true,
-                Opcode::Jmp => true,
+                Opcode::CJmp(..) => true,
+                Opcode::Jmp(..) => true,
                 _ => false,
             }
         }
@@ -175,6 +175,14 @@ mod tests {
             match self.opcode {
                 Opcode::Ret => true,
                 _ => false,
+            }
+        }
+        fn target_address(&self) -> Option<Address> {
+            match self.opcode {
+                Opcode::CJmp(addr) => Some(addr),
+                Opcode::Jmp(addr) => Some(addr),
+                Opcode::Call(addr) => Some(addr),
+                _ => None,
             }
         }
     }
