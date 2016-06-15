@@ -73,7 +73,7 @@ impl<'f> CFG<'f> {
         let mut next_is_leader: bool = true;
         for inst in instructions {
             if next_is_leader {
-                let idx = self.graph.add_node(BasicBlock::new(None, inst.address()));
+                let idx = self.graph.add_node(BasicBlock::new(inst.address()));
                 self.block_finder.insert(inst.address(), idx);
                 next_is_leader = false;
             }
@@ -81,7 +81,7 @@ impl<'f> CFG<'f> {
                 if let Some(target_addr) = inst.target_address() {
                     if !self.block_finder.contains_key(&target_addr) &&
                        target_addr >= start_addr && target_addr <= end_addr {
-                        let idx = self.graph.add_node(BasicBlock::new(None, target_addr));
+                        let idx = self.graph.add_node(BasicBlock::new(target_addr));
                         self.block_finder.insert(target_addr, idx);
                     }
                 }

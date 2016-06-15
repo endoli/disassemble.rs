@@ -35,9 +35,9 @@ pub struct BasicBlock<'f> {
 
 impl<'f> BasicBlock<'f> {
     /// Construct a new `BasicBlock`.
-    pub fn new(name: Option<&str>, address: Address) -> Self {
+    pub fn new(address: Address) -> Self {
         BasicBlock {
-            name: name.map(|s| s.to_owned()),
+            name: None,
             address: address,
             instructions: vec![],
         }
