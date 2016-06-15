@@ -40,7 +40,10 @@ pub trait Instruction: fmt::Debug {
     /// Does this instruction represent a call?
     fn is_call(&self) -> bool;
 
-    /// Does this instruction represent a local jump?
+    /// Does this instruction represent a local conditional jump?
+    fn is_local_conditional_jump(&self) -> bool;
+
+    /// Does this instruction represent a local conditional or unconditional jump?
     fn is_local_jump(&self) -> bool;
 
     /// Does this instruction represent a function return?

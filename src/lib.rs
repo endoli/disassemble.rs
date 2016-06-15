@@ -163,6 +163,13 @@ mod tests {
             }
         }
 
+        fn is_local_conditional_jump(&self) -> bool {
+            match self.opcode {
+                Opcode::CJmp(..) => true,
+                _ => false,
+            }
+        }
+
         fn is_local_jump(&self) -> bool {
             match self.opcode {
                 Opcode::CJmp(..) => true,
