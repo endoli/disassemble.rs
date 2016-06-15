@@ -49,7 +49,7 @@ impl<'f> CFG<'f> {
     /// subsequently split blocks as we find backward edges.
     ///
     /// [`instructions`]: trait.Instruction.html
-    pub fn build(&mut self, instructions: &Vec<Box<Instruction>>) {
+    pub fn build(&mut self, instructions: &[Box<Instruction>]) {
         if instructions.is_empty() {
             return;
         }
@@ -67,7 +67,7 @@ impl<'f> CFG<'f> {
     ///   for which `Instruction::is_block_terminator` returns `true`.
     /// * It is the target of a jump (conditional or unconditional) within
     ///   the function.
-    fn identify_blocks(&mut self, instructions: &Vec<Box<Instruction>>) {
+    fn identify_blocks(&mut self, instructions: &[Box<Instruction>]) {
         let start_addr = instructions[0].address();
         let end_addr = instructions.last().map(|i| i.address()).unwrap();
         let mut next_is_leader: bool = true;
@@ -124,7 +124,7 @@ impl<'f> CFG<'f> {
     /// We do this by iterating through the instructions looking for
     /// boundaries between the basic blocks and then setting up the
     /// new edges.
-    fn build_edges(&mut self, instructions: &Vec<Box<Instruction>>) {
+    fn build_edges(&mut self, instructions: &[Box<Instruction>]) {
         // Here, we're going to walk through the instructions again in
         // pairs of (i, Some(i + 1)):
         // [1,2..9] -> [Some(1),Some(2)..Some(9),None]
