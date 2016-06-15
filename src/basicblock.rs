@@ -6,7 +6,6 @@
 
 use address::Address;
 use instruction::Instruction;
-use petgraph::EdgeDirection;
 
 /// When is this edge taken? Conditionally or unconditionally?
 #[derive(Clone,Copy,Debug,Eq,PartialEq)]
@@ -57,6 +56,4 @@ pub struct BasicBlockEdge {
     ///
     /// [conditionally or unconditionally]: enum.EdgeType.html
     pub edge_type: EdgeType,
-    /// Is this an inbound or outbound edge?
-    pub direction: EdgeDirection,
 }
