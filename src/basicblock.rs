@@ -11,10 +11,10 @@ use petgraph::EdgeDirection;
 /// When is this edge taken? Conditionally or unconditionally?
 #[derive(Clone,Copy,Debug,Eq,PartialEq)]
 pub enum EdgeType {
-    /// This edge is taken when a conditional is true.
-    ConditionalTrue,
-    /// This edge is taken when a conditional is false.
-    ConditionalFalse,
+    /// This edge is when a conditional is taken.
+    ConditionalTaken,
+    /// This edge is when a conditional falls through to the next instruction.
+    ConditionalFallthrough,
     /// This is edge is always taken.
     Unconditional,
 }
