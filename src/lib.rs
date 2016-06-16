@@ -156,6 +156,10 @@ mod tests {
             self.address
         }
 
+        fn comment(&self) -> Option<String> {
+            None
+        }
+
         fn is_call(&self) -> bool {
             match self.opcode {
                 Opcode::Call(..) => true,
@@ -184,6 +188,7 @@ mod tests {
                 _ => false,
             }
         }
+
         fn target_address(&self) -> Option<Address> {
             match self.opcode {
                 Opcode::CJmp(addr) => Some(addr),

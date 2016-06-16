@@ -26,6 +26,9 @@ pub trait Instruction: fmt::Debug {
     /// [`function`]: struct.Function.html
     fn address(&self) -> Address;
 
+    /// Any associated `comment` text for this instruction.
+    fn comment(&self) -> Option<String>;
+
     /// Does this instruction terminate a `BasicBlock`?
     ///
     /// This is used when constructing a [control flow graph]
