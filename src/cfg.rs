@@ -158,6 +158,7 @@ impl<'f> CFG<'f> {
 #[cfg(test)]
 mod tests {
     use instruction::Instruction;
+    use petgraph::EdgeDirection;
     use super::CFG;
     use tests::*;
 
@@ -179,5 +180,11 @@ mod tests {
         cfg.build(&insts);
         assert!(cfg.entry_block.is_some());
         assert_eq!(cfg.graph.node_count(), 1);
+
+        let inbound = cfg.graph.externals(EdgeDirection::Incoming);
+        assert_eq!(inbound.count(), 1);
+
+        let outbound = cfg.graph.externals(EdgeDirection::Outgoing);
+        assert_eq!(outbound.count(), 1);
     }
 }
