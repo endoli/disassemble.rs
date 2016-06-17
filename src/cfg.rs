@@ -88,7 +88,7 @@ impl<'f> CFG<'f> {
                 next_is_leader = true;
             }
         }
-        self.entry_block = Some(self.block_finder.get(&instructions[0].address()).unwrap().clone());
+        self.entry_block = Some(*self.block_finder.get(&instructions[0].address()).unwrap());
     }
 
     /// Build an edge between 2 basic blocks.
@@ -102,7 +102,7 @@ impl<'f> CFG<'f> {
             if let Some(target_addr) = current_inst.target_address() {
                 if let Some(target_block_idx) = self.block_finder.get(&target_addr) {
                     let edge = BasicBlockEdge { edge_type: EdgeType::ConditionalTaken };
-                    self.graph.add_edge(current_block_idx, target_block_idx.clone(), edge);
+                    self.graph.add_edge(current_block_idx, *target_block_idx, edge);
                 }
                 let edge = BasicBlockEdge { edge_type: EdgeType::ConditionalFallthrough };
                 self.graph.add_edge(current_block_idx, next_block_idx, edge);
@@ -139,10 +139,9 @@ impl<'f> CFG<'f> {
                     current_block.instructions.push(current_inst);
                 }
                 // Does the next instruction begin a basic block?
-                let next_block_idx = self.block_finder
+                let next_block_idx = *self.block_finder
                     .get(&next_inst.address())
-                    .unwrap_or(&current_block_idx)
-                    .clone();
+                    .unwrap_or(&current_block_idx);
                 // If we're at a block boundary, create an edge between the
                 // current and next blocks. The type of the edge is determined
                 // by looking at the current instruction.
