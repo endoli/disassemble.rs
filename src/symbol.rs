@@ -16,15 +16,15 @@ pub struct Symbol {
     /// [address]: struct.Address.html
     pub address: Address,
     /// The name of this symbol.
-    pub name: String,
+    pub name: Option<String>,
 }
 
 impl Symbol {
     /// Construct a `Symbol`.
-    pub fn new(address: Address, name: &str) -> Self {
+    pub fn new(address: Address, name: Option<&str>) -> Self {
         Symbol {
             address: address,
-            name: name.to_owned(),
+            name: name.map(|n| n.to_owned()),
         }
     }
 }
