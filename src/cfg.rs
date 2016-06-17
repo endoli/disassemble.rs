@@ -40,7 +40,7 @@ impl<'f> CFG<'f> {
     /// subsequently split blocks as we find backward edges.
     ///
     /// [`instructions`]: trait.Instruction.html
-    pub fn new(instructions: &[Box<Instruction>]) -> Self {
+    pub fn new(instructions: &'f [Box<Instruction>]) -> Self {
         let mut cfg = CFG {
             graph: Graph::new(),
             entry_block: None,
@@ -120,7 +120,7 @@ impl<'f> CFG<'f> {
     /// We do this by iterating through the instructions looking for
     /// boundaries between the basic blocks and then setting up the
     /// new edges.
-    fn build_edges(&mut self, instructions: &[Box<Instruction>]) {
+    fn build_edges(&mut self, instructions: &'f [Box<Instruction>]) {
         // Here, we're going to walk through the instructions again in
         // pairs of (i, Some(i + 1)):
         // [1,2..9] -> [Some(1),Some(2)..Some(9),None]
@@ -131,6 +131,10 @@ impl<'f> CFG<'f> {
         let mut current_block_idx = self.entry_block.unwrap();
         for ij in current_inst_iter.zip(next_inst_iter) {
             if let (current_inst, Some(next_inst)) = ij {
+                // Add this instruction to the current block
+                if let Some(current_block) = self.graph.node_weight_mut(current_block_idx) {
+                    current_block.instructions.push(current_inst);
+                }
                 // Does the next instruction begin a basic block?
                 let next_block_idx = self.block_finder
                     .get(&next_inst.address())

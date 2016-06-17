@@ -18,7 +18,7 @@ pub struct Function<'f> {
     /// The [instructions] that comprise this function.
     ///
     /// [instructions]: trait.Instruction.html
-    pub instructions: Vec<Box<Instruction>>,
+    pub instructions: &'f [Box<Instruction>],
     /// The [control flow graph] for this function. This is build from the
     /// `instructions`. It is made up of [basic blocks].
     ///
@@ -29,8 +29,8 @@ pub struct Function<'f> {
 
 impl<'f> Function<'f> {
     /// Construct a new function
-    pub fn new(symbol: Symbol, instructions: Vec<Box<Instruction>>) -> Self {
-        let cfg = CFG::new(&instructions);
+    pub fn new(symbol: Symbol, instructions: &'f [Box<Instruction>]) -> Self {
+        let cfg = CFG::new(instructions);
         Function {
             symbol: symbol,
             instructions: instructions,
