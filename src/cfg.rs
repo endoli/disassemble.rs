@@ -28,15 +28,6 @@ pub struct CFG<'f> {
 }
 
 impl<'f> CFG<'f> {
-    /// Construct a new CFG
-    pub fn new() -> Self {
-        CFG {
-            graph: Graph::new(),
-            entry_block: None,
-            block_finder: BTreeMap::new(),
-        }
-    }
-
     /// Build the CFG from the [`instructions`].
     ///
     /// This is conducted in a 2 step process:
@@ -49,12 +40,17 @@ impl<'f> CFG<'f> {
     /// subsequently split blocks as we find backward edges.
     ///
     /// [`instructions`]: trait.Instruction.html
-    pub fn build(&mut self, instructions: &[Box<Instruction>]) {
-        if instructions.is_empty() {
-            return;
+    pub fn new(instructions: &[Box<Instruction>]) -> Self {
+        let mut cfg = CFG {
+            graph: Graph::new(),
+            entry_block: None,
+            block_finder: BTreeMap::new(),
+        };
+        if !instructions.is_empty() {
+            cfg.identify_blocks(instructions);
+            cfg.build_edges(instructions);
         }
-        self.identify_blocks(instructions);
-        self.build_edges(instructions);
+        cfg
     }
 
     /// Identify basic blocks by their boundaries.
@@ -164,20 +160,20 @@ mod tests {
 
     #[test]
     fn construct() {
-        let cfg = CFG::new();
+        let insts: Vec<Box<Instruction>> = vec![];
+        let cfg = CFG::new(&insts);
         assert!(cfg.entry_block.is_none());
         assert_eq!(cfg.graph.node_count(), 0);
     }
 
     #[test]
     fn build_one_basic_block() {
-        let mut cfg = CFG::new();
         let insts: Vec<Box<Instruction>> = vec![
             TestInstruction::new(0, Opcode::Add),
             TestInstruction::new(1, Opcode::Add),
             TestInstruction::new(2, Opcode::Ret),
         ];
-        cfg.build(&insts);
+        let cfg = CFG::new(&insts);
         assert!(cfg.entry_block.is_some());
         assert_eq!(cfg.graph.node_count(), 1);
 
