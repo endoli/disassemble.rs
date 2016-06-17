@@ -19,11 +19,11 @@ pub struct Function<'f> {
     ///
     /// [instructions]: trait.Instruction.html
     pub instructions: &'f [Box<Instruction>],
-    /// The [control flow graph] for this function. This is build from the
+    /// The [control flow graph] for this function. This is built from the
     /// `instructions`. It is made up of [basic blocks].
     ///
     /// [basic blocks]: struct.BasicBlock.html
-    /// [control flow graph]: https://en.wikipedia.org/wiki/Control_flow_graph
+    /// [control flow graph]: struct.CFG.html
     pub cfg: CFG<'f>,
 }
 

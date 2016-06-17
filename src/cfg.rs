@@ -23,7 +23,10 @@ pub struct CFG<'f> {
     /// [`BasicBlock`]: struct.BasicBlock.html
     /// [`NodeIndex`]: ../petgraph/graph/struct.NodeIndex.html
     pub entry_block: Option<NodeIndex>,
-    /// Map address to the corresponding basic block.
+    /// Map an [address] to the corresponding [basic block].
+    ///
+    /// [address]: struct.Address.html
+    /// [basic block]: struct.BasicBlock.html
     pub block_finder: BTreeMap<Address, NodeIndex>,
 }
 
