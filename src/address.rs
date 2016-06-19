@@ -23,7 +23,7 @@
 ///
 /// [`Function`]: struct.Function.html
 /// [`Instruction`]: trait.Instruction.html
-#[derive(Clone,Copy,Debug,Eq,Hash,Ord,PartialEq,PartialOrd)]
+#[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct Address {
     address: u64,
 }

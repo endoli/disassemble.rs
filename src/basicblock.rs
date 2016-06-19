@@ -8,7 +8,7 @@ use address::Address;
 use instruction::Instruction;
 
 /// When is this edge taken? Conditionally or unconditionally?
-#[derive(Clone,Copy,Debug,Eq,PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum EdgeType {
     /// This edge is when a conditional is taken.
     ConditionalTaken,
