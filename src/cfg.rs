@@ -124,20 +124,21 @@ impl<'f> ControlFlowGraph<'f> {
     /// boundaries between the basic blocks and then setting up the
     /// new edges.
     fn build_edges(&mut self, instructions: &'f [Box<Instruction>]) {
-        // Here, we're going to walk through the instructions again in
-        // pairs of (i, Some(i + 1)):
-        // [1,2..9] -> [Some(1),Some(2)..Some(9),None]
+        // Here, we're going to walk through the instructions again,
+        // looking at the current instruction, while also maintaining
+        // a separate iterator giving us the next instruction (if there
+        // is one.
         let current_inst_iter = instructions.iter();
-        let mut next_inst_iter = current_inst_iter.clone().map(Some).chain(Some(None).into_iter());
+        let mut next_inst_iter = current_inst_iter.clone();
         // Skip the first one so that we're actually working with the next one.
         next_inst_iter.next();
         let mut current_block_idx = self.entry_block.unwrap();
-        for ij in current_inst_iter.zip(next_inst_iter) {
-            if let (current_inst, Some(next_inst)) = ij {
-                // Add this instruction to the current block
-                if let Some(current_block) = self.graph.node_weight_mut(current_block_idx) {
-                    current_block.instructions.push(&**current_inst);
-                }
+        for current_inst in current_inst_iter {
+            // Add this instruction to the current block
+            if let Some(current_block) = self.graph.node_weight_mut(current_block_idx) {
+                current_block.instructions.push(&**current_inst);
+            }
+            if let Some(next_inst) = next_inst_iter.next() {
                 // Does the next instruction begin a basic block?
                 let next_block_idx = *self.block_finder
                     .get(&next_inst.address())
