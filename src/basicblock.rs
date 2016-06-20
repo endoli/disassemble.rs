@@ -30,7 +30,7 @@ pub struct BasicBlock<'f> {
     /// The address of the first instruction in the basic block.
     pub address: Address,
     /// The instructions within this basic block.
-    pub instructions: Vec<&'f Box<Instruction>>,
+    pub instructions: Vec<&'f Instruction>,
 }
 
 impl<'f> BasicBlock<'f> {

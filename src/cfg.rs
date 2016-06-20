@@ -136,7 +136,7 @@ impl<'f> CFG<'f> {
             if let (current_inst, Some(next_inst)) = ij {
                 // Add this instruction to the current block
                 if let Some(current_block) = self.graph.node_weight_mut(current_block_idx) {
-                    current_block.instructions.push(current_inst);
+                    current_block.instructions.push(&**current_inst);
                 }
                 // Does the next instruction begin a basic block?
                 let next_block_idx = *self.block_finder
