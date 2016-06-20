@@ -91,15 +91,15 @@
     <span class='doccomment'>/// [address]: struct.Address.html</span>
     <span class='kw'>pub</span> <span class='ident'>address</span>: <span class='ident'>Address</span>,
     <span class='doccomment'>/// The name of this symbol.</span>
-    <span class='kw'>pub</span> <span class='ident'>name</span>: <span class='ident'>String</span>,
+    <span class='kw'>pub</span> <span class='ident'>name</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>,
 }
 
 <span class='kw'>impl</span> <span class='ident'>Symbol</span> {
     <span class='doccomment'>/// Construct a `Symbol`.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>address</span>: <span class='ident'>Address</span>, <span class='ident'>name</span>: <span class='kw-2'>&amp;</span><span class='ident'>str</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>address</span>: <span class='ident'>Address</span>, <span class='ident'>name</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='ident'>str</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
         <span class='ident'>Symbol</span> {
             <span class='ident'>address</span>: <span class='ident'>address</span>,
-            <span class='ident'>name</span>: <span class='ident'>name</span>.<span class='ident'>to_owned</span>(),
+            <span class='ident'>name</span>: <span class='ident'>name</span>.<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>n</span><span class='op'>|</span> <span class='ident'>n</span>.<span class='ident'>to_owned</span>()),
         }
     }
 }

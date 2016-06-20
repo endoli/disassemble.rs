@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["CFG","A [control flow graph]."]]});
+initSidebarItems({"struct":[["ControlFlowGraph","A [control flow graph]."]]});

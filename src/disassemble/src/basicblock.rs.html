@@ -101,9 +101,6 @@
 <span id="57">57</span>
 <span id="58">58</span>
 <span id="59">59</span>
-<span id="60">60</span>
-<span id="61">61</span>
-<span id="62">62</span>
 </pre><pre class='rust '>
 <span class='comment'>// Licensed under the Apache License, Version 2.0 &lt;LICENSE-APACHE or</span>
 <span class='comment'>// http://www.apache.org/licenses/LICENSE-2.0&gt; or the MIT license</span>
@@ -113,15 +110,14 @@
 
 <span class='kw'>use</span> <span class='ident'>address</span>::<span class='ident'>Address</span>;
 <span class='kw'>use</span> <span class='ident'>instruction</span>::<span class='ident'>Instruction</span>;
-<span class='kw'>use</span> <span class='ident'>petgraph</span>::<span class='ident'>EdgeDirection</span>;
 
 <span class='doccomment'>/// When is this edge taken? Conditionally or unconditionally?</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>,<span class='ident'>Copy</span>,<span class='ident'>Debug</span>,<span class='ident'>Eq</span>,<span class='ident'>PartialEq</span>)]</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Copy</span>, <span class='ident'>Debug</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>EdgeType</span> {
-    <span class='doccomment'>/// This edge is taken when a conditional is true.</span>
-    <span class='ident'>ConditionalTrue</span>,
-    <span class='doccomment'>/// This edge is taken when a conditional is false.</span>
-    <span class='ident'>ConditionalFalse</span>,
+    <span class='doccomment'>/// This edge is when a conditional is taken.</span>
+    <span class='ident'>ConditionalTaken</span>,
+    <span class='doccomment'>/// This edge is when a conditional falls through to the next instruction.</span>
+    <span class='ident'>ConditionalFallthrough</span>,
     <span class='doccomment'>/// This is edge is always taken.</span>
     <span class='ident'>Unconditional</span>,
 }
@@ -138,14 +134,14 @@
     <span class='doccomment'>/// The address of the first instruction in the basic block.</span>
     <span class='kw'>pub</span> <span class='ident'>address</span>: <span class='ident'>Address</span>,
     <span class='doccomment'>/// The instructions within this basic block.</span>
-    <span class='kw'>pub</span> <span class='ident'>instructions</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;f</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='ident'>Instruction</span><span class='op'>&gt;&gt;</span>,
+    <span class='kw'>pub</span> <span class='ident'>instructions</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;f</span> <span class='ident'>Instruction</span><span class='op'>&gt;</span>,
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;f</span><span class='op'>&gt;</span> <span class='ident'>BasicBlock</span><span class='op'>&lt;</span><span class='lifetime'>&#39;f</span><span class='op'>&gt;</span> {
     <span class='doccomment'>/// Construct a new `BasicBlock`.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>name</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='ident'>str</span><span class='op'>&gt;</span>, <span class='ident'>address</span>: <span class='ident'>Address</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>address</span>: <span class='ident'>Address</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
         <span class='ident'>BasicBlock</span> {
-            <span class='ident'>name</span>: <span class='ident'>name</span>.<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>s</span><span class='op'>|</span> <span class='ident'>s</span>.<span class='ident'>to_owned</span>()),
+            <span class='ident'>name</span>: <span class='prelude-val'>None</span>,
             <span class='ident'>address</span>: <span class='ident'>address</span>,
             <span class='ident'>instructions</span>: <span class='macro'>vec</span><span class='macro'>!</span>[],
         }
@@ -164,8 +160,6 @@
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// [conditionally or unconditionally]: enum.EdgeType.html</span>
     <span class='kw'>pub</span> <span class='ident'>edge_type</span>: <span class='ident'>EdgeType</span>,
-    <span class='doccomment'>/// Is this an inbound or outbound edge?</span>
-    <span class='kw'>pub</span> <span class='ident'>direction</span>: <span class='ident'>EdgeDirection</span>,
 }
 </pre>
 </section>

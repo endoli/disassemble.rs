@@ -47,12 +47,15 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-174' class='srclink' href='../src/disassemble/src/instruction.rs.html#19-48' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-206' class='srclink' href='../src/disassemble/src/instruction.rs.html#19-57' title='goto source code'>[src]</a></span></h1>
 <pre class='rust trait'>pub trait Instruction: <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> {
     fn <a href='#tymethod.address' class='fnname'>address</a>(&amp;self) -&gt; <a class='struct' href='../disassemble/struct.Address.html' title='disassemble::Address'>Address</a>;
+    fn <a href='#tymethod.comment' class='fnname'>comment</a>(&amp;self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;;
     fn <a href='#tymethod.is_call' class='fnname'>is_call</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>;
+    fn <a href='#tymethod.is_local_conditional_jump' class='fnname'>is_local_conditional_jump</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>;
     fn <a href='#tymethod.is_local_jump' class='fnname'>is_local_jump</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>;
     fn <a href='#tymethod.is_return' class='fnname'>is_return</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>;
+    fn <a href='#tymethod.target_address' class='fnname'>target_address</a>(&amp;self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../disassemble/struct.Address.html' title='disassemble::Address'>Address</a>&gt;;
 
     fn <a href='#method.is_block_terminator' class='fnname'>is_block_terminator</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a> { ... }
 }</pre><div class='docblock'><p>An assembly instruction, bytecode operation, VM operation, etc.</p>
@@ -71,9 +74,12 @@ platform and body of generated code.</p>
 
 <p>The <a href="struct.Address.html"><code>address</code></a> of an instruction must be unique within a
 <a href="struct.Function.html"><code>function</code></a>.</p>
+</div><h3 id='tymethod.comment' class='method stab '><code>fn <a href='#tymethod.comment' class='fnname'>comment</a>(&amp;self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;</code></h3><div class='docblock'><p>Any associated <code>comment</code> text for this instruction.</p>
 </div><h3 id='tymethod.is_call' class='method stab '><code>fn <a href='#tymethod.is_call' class='fnname'>is_call</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h3><div class='docblock'><p>Does this instruction represent a call?</p>
-</div><h3 id='tymethod.is_local_jump' class='method stab '><code>fn <a href='#tymethod.is_local_jump' class='fnname'>is_local_jump</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h3><div class='docblock'><p>Does this instruction represent a local jump?</p>
+</div><h3 id='tymethod.is_local_conditional_jump' class='method stab '><code>fn <a href='#tymethod.is_local_conditional_jump' class='fnname'>is_local_conditional_jump</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h3><div class='docblock'><p>Does this instruction represent a local conditional jump?</p>
+</div><h3 id='tymethod.is_local_jump' class='method stab '><code>fn <a href='#tymethod.is_local_jump' class='fnname'>is_local_jump</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h3><div class='docblock'><p>Does this instruction represent a local conditional or unconditional jump?</p>
 </div><h3 id='tymethod.is_return' class='method stab '><code>fn <a href='#tymethod.is_return' class='fnname'>is_return</a>(&amp;self) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h3><div class='docblock'><p>Does this instruction represent a function return?</p>
+</div><h3 id='tymethod.target_address' class='method stab '><code>fn <a href='#tymethod.target_address' class='fnname'>target_address</a>(&amp;self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../disassemble/struct.Address.html' title='disassemble::Address'>Address</a>&gt;</code></h3><div class='docblock'><p>If this is a call or local jump, what is the target address?</p>
 </div></div>
             <h2 id='provided-methods'>Provided Methods</h2>
             <div class='methods'>

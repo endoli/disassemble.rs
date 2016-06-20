@@ -47,7 +47,7 @@
                    <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                        [<span class='inner'>&#x2212;</span>]
                    </a>
-               </span><a id='src-0' class='srclink' href='../src/disassemble/src/lib.rs.html#7-192' title='goto source code'>[src]</a></span></h1>
+               </span><a id='src-0' class='srclink' href='../src/disassemble/src/lib.rs.html#7-200' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'>
 <h1 id='disassemble' class='section-header'><a href='#disassemble'>Disassemble</a></h1>
 <p>This crate provides basic functionality for working with
@@ -109,8 +109,7 @@ top of your own crate:</p>
 additional features:</p>
 
 <ul>
-<li>Actually implement building the <a href="struct.CFG.html"><code>CFG</code></a> from the instructions.</li>
-<li>Implement DOT output for the <a href="struct.CFG.html"><code>CFG</code></a>. This can probably be done with the
+<li>Implement DOT output for the <a href="struct.ControlFlowGraph.html"><code>ControlFlowGraph</code></a>. This can probably be done with the
 help of [<code>petgraph</code>].</li>
 <li>HTML output modes?</li>
 <li>Implement loop finding. (Havlak)</li>
@@ -149,8 +148,8 @@ except at the exit.</p>
                            </td>
                        </tr>
                        <tr class=' module-item'>
-                           <td><a class='struct' href='struct.CFG.html'
-                                  title='disassemble::CFG'>CFG</a></td>
+                           <td><a class='struct' href='struct.ControlFlowGraph.html'
+                                  title='disassemble::ControlFlowGraph'>ControlFlowGraph</a></td>
                            <td class='docblock short'>
                                 <p>A <a href="https://en.wikipedia.org/wiki/Control_flow_graph">control flow graph</a>.</p>
                            </td>

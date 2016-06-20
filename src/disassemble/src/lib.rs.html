@@ -234,6 +234,14 @@
 <span id="190">190</span>
 <span id="191">191</span>
 <span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
 </pre><pre class='rust '>
 <span class='comment'>// Licensed under the Apache License, Version 2.0 &lt;LICENSE-APACHE or</span>
 <span class='comment'>// http://www.apache.org/licenses/LICENSE-2.0&gt; or the MIT license</span>
@@ -304,8 +312,7 @@
 <span class='doccomment'>//! In the future, we want to extend this library to support a number of</span>
 <span class='doccomment'>//! additional features:</span>
 <span class='doccomment'>//!</span>
-<span class='doccomment'>//! * Actually implement building the [`CFG`] from the instructions.</span>
-<span class='doccomment'>//! * Implement DOT output for the [`CFG`]. This can probably be done with the</span>
+<span class='doccomment'>//! * Implement DOT output for the [`ControlFlowGraph`]. This can probably be done with the</span>
 <span class='doccomment'>//!   help of [`petgraph`].</span>
 <span class='doccomment'>//! * HTML output modes?</span>
 <span class='doccomment'>//! * Implement loop finding. (Havlak)</span>
@@ -320,7 +327,7 @@
 <span class='doccomment'>//! Contributions are welcome.</span>
 <span class='doccomment'>//!</span>
 <span class='doccomment'>//! [Capstone Engine]: http://www.capstone-engine.org/</span>
-<span class='doccomment'>//! [`CFG`]: struct.CFG.html</span>
+<span class='doccomment'>//! [`ControlFlowGraph`]: struct.ControlFlowGraph.html</span>
 <span class='doccomment'>//! [control flow graph]: https://en.wikipedia.org/wiki/Control_flow_graph</span>
 <span class='doccomment'>//! [data flow analysis]: https://en.wikipedia.org/wiki/Data-flow_analysis</span>
 <span class='doccomment'>//! [`Function`]: struct.Function.html</span>
@@ -344,7 +351,7 @@
 
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>address</span>::<span class='ident'>Address</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>basicblock</span>::{<span class='ident'>BasicBlock</span>, <span class='ident'>BasicBlockEdge</span>, <span class='ident'>EdgeType</span>};
-<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>cfg</span>::<span class='ident'>CFG</span>;
+<span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>cfg</span>::<span class='ident'>ControlFlowGraph</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>function</span>::<span class='ident'>Function</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>instruction</span>::<span class='ident'>Instruction</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>symbol</span>::<span class='ident'>Symbol</span>;
@@ -360,69 +367,78 @@
     <span class='kw'>use</span> <span class='ident'>address</span>::<span class='ident'>Address</span>;
     <span class='kw'>use</span> <span class='ident'>instruction</span>::<span class='ident'>Instruction</span>;
 
-    <span class='doccomment'>/// A named register location.</span>
-    <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>,<span class='ident'>Copy</span>,<span class='ident'>Debug</span>)]</span>
-    <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Register</span> {
-        <span class='ident'>name</span>: <span class='ident'>i32</span>,
+    <span class='doccomment'>/// Opcodes that we&#39;ll use as instructions.</span>
+    <span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>dead_code</span>,<span class='ident'>missing_docs</span>)]</span>
+    <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
+    <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Opcode</span> {
+        <span class='ident'>Add</span>,
+        <span class='ident'>Mul</span>,
+        <span class='ident'>CJmp</span>(<span class='ident'>Address</span>),
+        <span class='ident'>Jmp</span>(<span class='ident'>Address</span>),
+        <span class='ident'>Call</span>(<span class='ident'>Address</span>),
+        <span class='ident'>Ret</span>,
     }
 
-    <span class='kw'>impl</span> <span class='ident'>Register</span> {
-        <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>name</span>: <span class='ident'>i32</span>) <span class='op'>-&gt;</span> <span class='kw'>Self</span> {
-            <span class='ident'>Register</span> { <span class='ident'>name</span>: <span class='ident'>name</span> }
+    <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
+    <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>TestInstruction</span> {
+        <span class='ident'>address</span>: <span class='ident'>Address</span>,
+        <span class='ident'>opcode</span>: <span class='ident'>Opcode</span>,
+    }
+
+    <span class='kw'>impl</span> <span class='ident'>TestInstruction</span> {
+        <span class='doccomment'>/// Construct a `TestInstruction`.</span>
+        <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>address</span>: <span class='ident'>u64</span>, <span class='ident'>opcode</span>: <span class='ident'>Opcode</span>) <span class='op'>-&gt;</span> <span class='ident'>Box</span><span class='op'>&lt;</span><span class='kw'>Self</span><span class='op'>&gt;</span> {
+            <span class='ident'>Box</span>::<span class='ident'>new</span>(<span class='ident'>TestInstruction</span> {
+                <span class='ident'>address</span>: <span class='ident'>Address</span>::<span class='ident'>new</span>(<span class='ident'>address</span>),
+                <span class='ident'>opcode</span>: <span class='ident'>opcode</span>,
+            })
         }
     }
 
-    <span class='doccomment'>/// Opcodes that we&#39;ll use as instructions.</span>
-    <span class='doccomment'>/// The first address value in each is their</span>
-    <span class='doccomment'>/// address in &#39;memory&#39;.</span>
-    <span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>dead_code</span>)]</span>
-    <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
-    <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Opcode</span> {
-        <span class='doccomment'>/// Add 2 register values and place the result in a third.</span>
-        <span class='ident'>Add</span>(<span class='ident'>Address</span>, <span class='ident'>Register</span>, <span class='ident'>Register</span>, <span class='ident'>Register</span>),
-        <span class='doccomment'>/// Multiply 2 register values and place the result in a third.</span>
-        <span class='ident'>Mul</span>(<span class='ident'>Address</span>, <span class='ident'>Register</span>, <span class='ident'>Register</span>, <span class='ident'>Register</span>),
-        <span class='doccomment'>/// Jump to address if the register value is true.</span>
-        <span class='ident'>CJmp</span>(<span class='ident'>Address</span>, <span class='ident'>Register</span>, <span class='ident'>Address</span>),
-        <span class='doccomment'>/// Jump to `address`.</span>
-        <span class='ident'>Jmp</span>(<span class='ident'>Address</span>, <span class='ident'>Address</span>),
-        <span class='doccomment'>/// Call the subroutine at `address`.</span>
-        <span class='ident'>Call</span>(<span class='ident'>Address</span>, <span class='ident'>Address</span>),
-        <span class='doccomment'>/// Return from this function.</span>
-        <span class='ident'>Ret</span>(<span class='ident'>Address</span>),
-    }
-
-    <span class='kw'>impl</span> <span class='ident'>Instruction</span> <span class='kw'>for</span> <span class='ident'>Opcode</span> {
+    <span class='kw'>impl</span> <span class='ident'>Instruction</span> <span class='kw'>for</span> <span class='ident'>TestInstruction</span> {
         <span class='kw'>fn</span> <span class='ident'>address</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Address</span> {
-            <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
-                <span class='ident'>Opcode</span>::<span class='ident'>Add</span>(<span class='ident'>addr</span>, _, _, _) <span class='op'>=&gt;</span> <span class='ident'>addr</span>,
-                <span class='ident'>Opcode</span>::<span class='ident'>Mul</span>(<span class='ident'>addr</span>, _, _, _) <span class='op'>=&gt;</span> <span class='ident'>addr</span>,
-                <span class='ident'>Opcode</span>::<span class='ident'>CJmp</span>(<span class='ident'>addr</span>, _, _) <span class='op'>=&gt;</span> <span class='ident'>addr</span>,
-                <span class='ident'>Opcode</span>::<span class='ident'>Jmp</span>(<span class='ident'>addr</span>, _) <span class='op'>=&gt;</span> <span class='ident'>addr</span>,
-                <span class='ident'>Opcode</span>::<span class='ident'>Call</span>(<span class='ident'>addr</span>, _) <span class='op'>=&gt;</span> <span class='ident'>addr</span>,
-                <span class='ident'>Opcode</span>::<span class='ident'>Ret</span>(<span class='ident'>addr</span>) <span class='op'>=&gt;</span> <span class='ident'>addr</span>,
-            }
+            <span class='self'>self</span>.<span class='ident'>address</span>
+        }
+
+        <span class='kw'>fn</span> <span class='ident'>comment</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span> {
+            <span class='prelude-val'>None</span>
         }
 
         <span class='kw'>fn</span> <span class='ident'>is_call</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
-            <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
-                <span class='ident'>Opcode</span>::<span class='ident'>Call</span>(_, _) <span class='op'>=&gt;</span> <span class='boolval'>true</span>,
+            <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>opcode</span> {
+                <span class='ident'>Opcode</span>::<span class='ident'>Call</span>(..) <span class='op'>=&gt;</span> <span class='boolval'>true</span>,
+                _ <span class='op'>=&gt;</span> <span class='boolval'>false</span>,
+            }
+        }
+
+        <span class='kw'>fn</span> <span class='ident'>is_local_conditional_jump</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
+            <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>opcode</span> {
+                <span class='ident'>Opcode</span>::<span class='ident'>CJmp</span>(..) <span class='op'>=&gt;</span> <span class='boolval'>true</span>,
                 _ <span class='op'>=&gt;</span> <span class='boolval'>false</span>,
             }
         }
 
         <span class='kw'>fn</span> <span class='ident'>is_local_jump</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
-            <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
-                <span class='ident'>Opcode</span>::<span class='ident'>CJmp</span>(_, _, _) <span class='op'>=&gt;</span> <span class='boolval'>true</span>,
-                <span class='ident'>Opcode</span>::<span class='ident'>Jmp</span>(_, _) <span class='op'>=&gt;</span> <span class='boolval'>true</span>,
+            <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>opcode</span> {
+                <span class='ident'>Opcode</span>::<span class='ident'>CJmp</span>(..) <span class='op'>=&gt;</span> <span class='boolval'>true</span>,
+                <span class='ident'>Opcode</span>::<span class='ident'>Jmp</span>(..) <span class='op'>=&gt;</span> <span class='boolval'>true</span>,
                 _ <span class='op'>=&gt;</span> <span class='boolval'>false</span>,
             }
         }
 
         <span class='kw'>fn</span> <span class='ident'>is_return</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
-            <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
-                <span class='ident'>Opcode</span>::<span class='ident'>Ret</span>(_) <span class='op'>=&gt;</span> <span class='boolval'>true</span>,
+            <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>opcode</span> {
+                <span class='ident'>Opcode</span>::<span class='ident'>Ret</span> <span class='op'>=&gt;</span> <span class='boolval'>true</span>,
                 _ <span class='op'>=&gt;</span> <span class='boolval'>false</span>,
+            }
+        }
+
+        <span class='kw'>fn</span> <span class='ident'>target_address</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Address</span><span class='op'>&gt;</span> {
+            <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>opcode</span> {
+                <span class='ident'>Opcode</span>::<span class='ident'>CJmp</span>(<span class='ident'>addr</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>addr</span>),
+                <span class='ident'>Opcode</span>::<span class='ident'>Jmp</span>(<span class='ident'>addr</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>addr</span>),
+                <span class='ident'>Opcode</span>::<span class='ident'>Call</span>(<span class='ident'>addr</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>addr</span>),
+                _ <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>,
             }
         }
     }

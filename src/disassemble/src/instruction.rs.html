@@ -90,6 +90,15 @@
 <span id="46">46</span>
 <span id="47">47</span>
 <span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
 </pre><pre class='rust '>
 <span class='comment'>// Licensed under the Apache License, Version 2.0 &lt;LICENSE-APACHE or</span>
 <span class='comment'>// http://www.apache.org/licenses/LICENSE-2.0&gt; or the MIT license</span>
@@ -119,6 +128,9 @@
     <span class='doccomment'>/// [`function`]: struct.Function.html</span>
     <span class='kw'>fn</span> <span class='ident'>address</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Address</span>;
 
+    <span class='doccomment'>/// Any associated `comment` text for this instruction.</span>
+    <span class='kw'>fn</span> <span class='ident'>comment</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>;
+
     <span class='doccomment'>/// Does this instruction terminate a `BasicBlock`?</span>
     <span class='doccomment'>///</span>
     <span class='doccomment'>/// This is used when constructing a [control flow graph]</span>
@@ -133,11 +145,17 @@
     <span class='doccomment'>/// Does this instruction represent a call?</span>
     <span class='kw'>fn</span> <span class='ident'>is_call</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span>;
 
-    <span class='doccomment'>/// Does this instruction represent a local jump?</span>
+    <span class='doccomment'>/// Does this instruction represent a local conditional jump?</span>
+    <span class='kw'>fn</span> <span class='ident'>is_local_conditional_jump</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span>;
+
+    <span class='doccomment'>/// Does this instruction represent a local conditional or unconditional jump?</span>
     <span class='kw'>fn</span> <span class='ident'>is_local_jump</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span>;
 
     <span class='doccomment'>/// Does this instruction represent a function return?</span>
     <span class='kw'>fn</span> <span class='ident'>is_return</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span>;
+
+    <span class='doccomment'>/// If this is a call or local jump, what is the target address?</span>
+    <span class='kw'>fn</span> <span class='ident'>target_address</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Address</span><span class='op'>&gt;</span>;
 }
 </pre>
 </section>
