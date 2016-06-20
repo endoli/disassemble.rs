@@ -87,7 +87,7 @@
 //! [data flow analysis]: https://en.wikipedia.org/wiki/Data-flow_analysis
 //! [`Function`]: struct.Function.html
 //! [`Instruction`]: trait.Instruction.html
-//! [petgraph]: https://crates.io/crates/petgraph
+//! [`petgraph`]: https://crates.io/crates/petgraph
 //! [`Symbol`]: struct.Symbol.html
 
 #![warn(missing_docs)]
