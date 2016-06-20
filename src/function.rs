@@ -4,7 +4,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use cfg::CFG;
+use cfg::ControlFlowGraph;
 use instruction::Instruction;
 use symbol::Symbol;
 
@@ -23,18 +23,18 @@ pub struct Function<'f> {
     /// `instructions`. It is made up of [basic blocks].
     ///
     /// [basic blocks]: struct.BasicBlock.html
-    /// [control flow graph]: struct.CFG.html
-    pub cfg: CFG<'f>,
+    /// [control flow graph]: struct.ControlFlowGraph.html
+    pub control_flow_graph: ControlFlowGraph<'f>,
 }
 
 impl<'f> Function<'f> {
     /// Construct a new function
     pub fn new(symbol: Symbol, instructions: &'f [Box<Instruction>]) -> Self {
-        let cfg = CFG::new(instructions);
+        let cfg = ControlFlowGraph::new(instructions);
         Function {
             symbol: symbol,
             instructions: instructions,
-            cfg: cfg,
+            control_flow_graph: cfg,
         }
     }
 }

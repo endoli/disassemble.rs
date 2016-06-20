@@ -67,7 +67,7 @@
 //! In the future, we want to extend this library to support a number of
 //! additional features:
 //!
-//! * Implement DOT output for the [`CFG`]. This can probably be done with the
+//! * Implement DOT output for the [`ControlFlowGraph`]. This can probably be done with the
 //!   help of [`petgraph`].
 //! * HTML output modes?
 //! * Implement loop finding. (Havlak)
@@ -82,7 +82,7 @@
 //! Contributions are welcome.
 //!
 //! [Capstone Engine]: http://www.capstone-engine.org/
-//! [`CFG`]: struct.CFG.html
+//! [`ControlFlowGraph`]: struct.ControlFlowGraph.html
 //! [control flow graph]: https://en.wikipedia.org/wiki/Control_flow_graph
 //! [data flow analysis]: https://en.wikipedia.org/wiki/Data-flow_analysis
 //! [`Function`]: struct.Function.html
@@ -106,7 +106,7 @@ mod symbol;
 
 pub use self::address::Address;
 pub use self::basicblock::{BasicBlock, BasicBlockEdge, EdgeType};
-pub use self::cfg::CFG;
+pub use self::cfg::ControlFlowGraph;
 pub use self::function::Function;
 pub use self::instruction::Instruction;
 pub use self::symbol::Symbol;

@@ -13,8 +13,8 @@ use std::collections::BTreeMap;
 /// A [control flow graph].
 ///
 /// [control flow graph]: https://en.wikipedia.org/wiki/Control_flow_graph
-pub struct CFG<'f> {
-    /// The [`Graph`] that stores the actual CFG
+pub struct ControlFlowGraph<'f> {
+    /// The [`Graph`] that stores the actual ControlFlowGraph
     ///
     /// [`Graph`]: ../petgraph/graph/struct.Graph.html
     pub graph: Graph<BasicBlock<'f>, BasicBlockEdge>,
@@ -30,8 +30,8 @@ pub struct CFG<'f> {
     pub block_finder: BTreeMap<Address, NodeIndex>,
 }
 
-impl<'f> CFG<'f> {
-    /// Build the CFG from the [`instructions`].
+impl<'f> ControlFlowGraph<'f> {
+    /// Build the ControlFlowGraph from the [`instructions`].
     ///
     /// This is conducted in a 2 step process:
     ///
@@ -44,7 +44,7 @@ impl<'f> CFG<'f> {
     ///
     /// [`instructions`]: trait.Instruction.html
     pub fn new(instructions: &'f [Box<Instruction>]) -> Self {
-        let mut cfg = CFG {
+        let mut cfg = ControlFlowGraph {
             graph: Graph::new(),
             entry_block: None,
             block_finder: BTreeMap::new(),
@@ -161,13 +161,13 @@ impl<'f> CFG<'f> {
 mod tests {
     use instruction::Instruction;
     use petgraph::EdgeDirection;
-    use super::CFG;
+    use super::ControlFlowGraph;
     use tests::*;
 
     #[test]
     fn construct() {
         let insts: Vec<Box<Instruction>> = vec![];
-        let cfg = CFG::new(&insts);
+        let cfg = ControlFlowGraph::new(&insts);
         assert!(cfg.entry_block.is_none());
         assert_eq!(cfg.graph.node_count(), 0);
     }
@@ -179,7 +179,7 @@ mod tests {
             TestInstruction::new(1, Opcode::Add),
             TestInstruction::new(2, Opcode::Ret),
         ];
-        let cfg = CFG::new(&insts);
+        let cfg = ControlFlowGraph::new(&insts);
         assert!(cfg.entry_block.is_some());
         assert_eq!(cfg.graph.node_count(), 1);
 
