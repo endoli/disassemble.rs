@@ -102,6 +102,7 @@ mod basicblock;
 mod cfg;
 mod function;
 mod instruction;
+mod loops;
 mod symbol;
 
 pub use self::address::Address;
@@ -109,6 +110,7 @@ pub use self::basicblock::{BasicBlock, BasicBlockEdge, EdgeType};
 pub use self::cfg::ControlFlowGraph;
 pub use self::function::Function;
 pub use self::instruction::Instruction;
+pub use self::loops::{find_loops, LoopStructureGraph, SimpleLoop};
 pub use self::symbol::Symbol;
 
 #[cfg(test)]
