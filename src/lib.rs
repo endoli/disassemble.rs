@@ -161,6 +161,10 @@ mod tests {
             None
         }
 
+        fn cycle_count(&self) -> Option<u32> {
+            None
+        }
+
         fn is_call(&self) -> bool {
             match self.opcode {
                 Opcode::Call(..) => true,
