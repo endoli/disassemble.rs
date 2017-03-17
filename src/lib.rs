@@ -146,9 +146,9 @@ mod tests {
         /// Construct a `TestInstruction`.
         pub fn new(address: u64, opcode: Opcode) -> Box<Self> {
             Box::new(TestInstruction {
-                address: Address::new(address),
-                opcode: opcode,
-            })
+                         address: Address::new(address),
+                         opcode: opcode,
+                     })
         }
     }
 

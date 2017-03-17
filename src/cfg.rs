@@ -140,9 +140,8 @@ impl<'f> ControlFlowGraph<'f> {
             }
             if let Some(next_inst) = next_inst_iter.next() {
                 // Does the next instruction begin a basic block?
-                let next_block_idx = *self.block_finder
-                    .get(&next_inst.address())
-                    .unwrap_or(&current_block_idx);
+                let next_block_idx =
+                    *self.block_finder.get(&next_inst.address()).unwrap_or(&current_block_idx);
                 // If we're at a block boundary, create an edge between the
                 // current and next blocks. The type of the edge is determined
                 // by looking at the current instruction.
@@ -175,11 +174,9 @@ mod tests {
 
     #[test]
     fn build_one_basic_block() {
-        let insts: Vec<Box<Instruction>> = vec![
-            TestInstruction::new(0, Opcode::Add),
-            TestInstruction::new(1, Opcode::Add),
-            TestInstruction::new(2, Opcode::Ret),
-        ];
+        let insts: Vec<Box<Instruction>> = vec![TestInstruction::new(0, Opcode::Add),
+                                                TestInstruction::new(1, Opcode::Add),
+                                                TestInstruction::new(2, Opcode::Ret)];
         let cfg = ControlFlowGraph::new(&insts);
         assert!(cfg.entry_block.is_some());
         assert_eq!(cfg.graph.node_count(), 1);
