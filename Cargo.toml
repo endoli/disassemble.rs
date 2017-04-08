@@ -11,4 +11,4 @@ repository = "https://github.com/endoli/disassemble.rs"
 documentation = "https://endoli.github.io/disassemble.rs/"
 
 [dependencies]
-petgraph = "0.2.7"
+petgraph = "0.4.4"
