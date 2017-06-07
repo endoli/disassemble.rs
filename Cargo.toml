@@ -10,5 +10,9 @@ homepage = "https://github.com/endoli/disassemble.rs"
 repository = "https://github.com/endoli/disassemble.rs"
 documentation = "https://endoli.github.io/disassemble.rs/"
 
+[features]
+capstone = ["capstone_rust"]
+
 [dependencies]
 petgraph = "0.4.4"
+capstone_rust = { version = "0.2", optional = true }
