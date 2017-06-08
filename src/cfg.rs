@@ -173,9 +173,9 @@ mod tests {
 
     #[test]
     fn build_one_basic_block() {
-        let insts = vec![TestInstruction::new(0, Opcode::Add),
-                         TestInstruction::new(1, Opcode::Add),
-                         TestInstruction::new(2, Opcode::Ret)];
+        let insts = [TestInstruction::new(0, Opcode::Add),
+                     TestInstruction::new(1, Opcode::Add),
+                     TestInstruction::new(2, Opcode::Ret)];
         let cfg = ControlFlowGraph::new(&insts);
         assert!(cfg.entry_block.is_some());
         assert_eq!(cfg.graph.node_count(), 1);
