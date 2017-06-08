@@ -8,14 +8,7 @@ use capstone_rust::capstone;
 use super::address::Address;
 use super::instruction::Instruction;
 
-/// An Instruction implementation using Capstone
-#[derive(Debug)]
-pub struct CapstoneInstruction {
-    /// The underlying Capstone instruction object.
-    pub instruction: capstone::Instr,
-}
-
-impl Instruction for CapstoneInstruction {
+impl Instruction for capstone::Instr {
     fn address(&self) -> Address {
         Address::new(0)
     }

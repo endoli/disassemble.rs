@@ -112,8 +112,6 @@ mod symbol;
 
 pub use self::address::Address;
 pub use self::basicblock::{BasicBlock, BasicBlockEdge, EdgeType};
-#[cfg(feature = "capstone")]
-pub use self::capstone::CapstoneInstruction;
 pub use self::cfg::ControlFlowGraph;
 pub use self::function::Function;
 pub use self::instruction::Instruction;
