@@ -13,11 +13,11 @@ use std::collections::BTreeMap;
 /// A [control flow graph].
 ///
 /// [control flow graph]: https://en.wikipedia.org/wiki/Control_flow_graph
-pub struct ControlFlowGraph<'f> {
+pub struct ControlFlowGraph<'f, I: 'f + Instruction> {
     /// The [`Graph`] that stores the actual ControlFlowGraph
     ///
     /// [`Graph`]: ../petgraph/graph/struct.Graph.html
-    pub graph: Graph<BasicBlock<'f>, BasicBlockEdge>,
+    pub graph: Graph<BasicBlock<'f, I>, BasicBlockEdge>,
     /// The [`NodeIndex`] for the entry [`BasicBlock`] for this function.
     ///
     /// [`BasicBlock`]: struct.BasicBlock.html
@@ -30,7 +30,7 @@ pub struct ControlFlowGraph<'f> {
     pub block_finder: BTreeMap<Address, NodeIndex>,
 }
 
-impl<'f> ControlFlowGraph<'f> {
+impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
     /// Build the ControlFlowGraph from the [`instructions`].
     ///
     /// This is conducted in a 2 step process:
@@ -43,7 +43,7 @@ impl<'f> ControlFlowGraph<'f> {
     /// subsequently split blocks as we find backward edges.
     ///
     /// [`instructions`]: trait.Instruction.html
-    pub fn new(instructions: &'f [Box<Instruction>]) -> Self {
+    pub fn new(instructions: &'f [I]) -> Self {
         let mut cfg = ControlFlowGraph {
             graph: Graph::new(),
             entry_block: None,
@@ -66,7 +66,7 @@ impl<'f> ControlFlowGraph<'f> {
     ///   for which `Instruction::is_block_terminator` returns `true`.
     /// * It is the target of a jump (conditional or unconditional) within
     ///   the function.
-    fn identify_blocks(&mut self, instructions: &[Box<Instruction>]) {
+    fn identify_blocks(&mut self, instructions: &[I]) {
         let start_addr = instructions[0].address();
         let end_addr = instructions.last().map(|i| i.address()).unwrap();
         let mut next_is_leader: bool = true;
@@ -95,7 +95,7 @@ impl<'f> ControlFlowGraph<'f> {
     fn build_edge(&mut self,
                   current_block_idx: NodeIndex,
                   next_block_idx: NodeIndex,
-                  current_inst: &Box<Instruction>) {
+                  current_inst: &I) {
         if current_inst.is_local_conditional_jump() {
             // We have one edge for the jump target and one for the fallthrough.
             // We jump through some hoops here to keep the borrow checker happy.
@@ -123,7 +123,7 @@ impl<'f> ControlFlowGraph<'f> {
     /// We do this by iterating through the instructions looking for
     /// boundaries between the basic blocks and then setting up the
     /// new edges.
-    fn build_edges(&mut self, instructions: &'f [Box<Instruction>]) {
+    fn build_edges(&mut self, instructions: &'f [I]) {
         // Here, we're going to walk through the instructions again,
         // looking at the current instruction, while also maintaining
         // a separate iterator giving us the next instruction (if there
@@ -136,7 +136,7 @@ impl<'f> ControlFlowGraph<'f> {
         for current_inst in current_inst_iter {
             // Add this instruction to the current block
             if let Some(current_block) = self.graph.node_weight_mut(current_block_idx) {
-                current_block.instructions.push(&**current_inst);
+                current_block.instructions.push(current_inst);
             }
             if let Some(next_inst) = next_inst_iter.next() {
                 // Does the next instruction begin a basic block?
@@ -166,7 +166,7 @@ mod tests {
 
     #[test]
     fn construct() {
-        let insts: Vec<Box<Instruction>> = vec![];
+        let insts: Vec<TestInstruction> = vec![];
         let cfg = ControlFlowGraph::new(&insts);
         assert!(cfg.entry_block.is_none());
         assert_eq!(cfg.graph.node_count(), 0);
@@ -174,9 +174,9 @@ mod tests {
 
     #[test]
     fn build_one_basic_block() {
-        let insts: Vec<Box<Instruction>> = vec![TestInstruction::new(0, Opcode::Add),
-                                                TestInstruction::new(1, Opcode::Add),
-                                                TestInstruction::new(2, Opcode::Ret)];
+        let insts: Vec<Instruction> = vec![TestInstruction::new(0, Opcode::Add),
+                                           TestInstruction::new(1, Opcode::Add),
+                                           TestInstruction::new(2, Opcode::Ret)];
         let cfg = ControlFlowGraph::new(&insts);
         assert!(cfg.entry_block.is_some());
         assert_eq!(cfg.graph.node_count(), 1);

@@ -7,6 +7,7 @@
 #![allow(missing_docs)]
 
 use cfg::ControlFlowGraph;
+use instruction::Instruction;
 use petgraph::graph::NodeIndex;
 
 #[derive(Debug, Default)]
@@ -84,9 +85,9 @@ impl<'lsg> Default for LoopStructureGraph<'lsg> {
 /// Variable names and step numbering has been chosen to be identical
 /// to the nomenclature in Havlak's paper (which, in turn, is similar
 /// to the one used by Tarjan).
-pub fn find_loops<'havlak>(cfg: &'havlak ControlFlowGraph<'havlak>,
-                           _lsg: &'havlak mut LoopStructureGraph<'havlak>)
-                           -> usize {
+pub fn find_loops<'havlak, I: Instruction>(cfg: &'havlak ControlFlowGraph<'havlak, I>,
+                                           _lsg: &'havlak mut LoopStructureGraph<'havlak>)
+                                           -> usize {
     if cfg.entry_block.is_none() {
         return 0;
     }

@@ -24,16 +24,16 @@ pub enum EdgeType {
 ///
 /// [basic block]: https://en.wikipedia.org/wiki/Basic_block
 #[derive(Debug)]
-pub struct BasicBlock<'f> {
+pub struct BasicBlock<'f, I: 'f + Instruction> {
     /// The name of the basic block. Not all blocks have meaningful names.
     pub name: Option<String>,
     /// The address of the first instruction in the basic block.
     pub address: Address,
     /// The instructions within this basic block.
-    pub instructions: Vec<&'f Instruction>,
+    pub instructions: Vec<&'f I>,
 }
 
-impl<'f> BasicBlock<'f> {
+impl<'f, I: Instruction> BasicBlock<'f, I> {
     /// Construct a new `BasicBlock`.
     pub fn new(address: Address) -> Self {
         BasicBlock {
