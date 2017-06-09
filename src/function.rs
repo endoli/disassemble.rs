@@ -4,6 +4,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+use address::Address;
 use cfg::ControlFlowGraph;
 use instruction::Instruction;
 use symbol::Symbol;
@@ -36,5 +37,48 @@ impl<'f, I: Instruction> Function<'f, I> {
             instructions: instructions,
             control_flow_graph: cfg,
         }
+    }
+
+    /// Get the addresses that are called by this function.
+    ///
+    /// This vector may contain duplicates.
+    pub fn calls(&self) -> Vec<Address> {
+        self.instructions
+            .iter()
+            .filter(|i| i.is_call())
+            .filter_map(|i| i.target_address())
+            .collect()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use address::Address;
+    use function::Function;
+    use symbol::Symbol;
+    use tests::*;
+
+    #[test]
+    fn calls_none() {
+        let insts = [TestInstruction::new(0, Opcode::Add),
+                     TestInstruction::new(1, Opcode::Add),
+                     TestInstruction::new(2, Opcode::Ret)];
+        let f = Function::new(Symbol::new(Address::new(100), None), &insts);
+        let calls = f.calls();
+        assert!(calls.is_empty());
+    }
+
+    #[test]
+    fn calls_some() {
+        let insts = [TestInstruction::new(0, Opcode::Add),
+                     TestInstruction::new(1, Opcode::Call(Address::new(500))),
+                     TestInstruction::new(2, Opcode::Add),
+                     TestInstruction::new(3, Opcode::Call(Address::new(400))),
+                     TestInstruction::new(4, Opcode::Call(Address::new(500))),
+                     TestInstruction::new(5, Opcode::Ret)];
+        let f = Function::new(Symbol::new(Address::new(100), None), &insts);
+        let calls = f.calls();
+        assert_eq!(calls,
+                   vec![Address::new(500), Address::new(400), Address::new(500)]);
     }
 }
