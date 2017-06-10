@@ -4,29 +4,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use address::Address;
+use callgraphanalysis::{CallGraphAnalysis, CallSite};
 use cfg::ControlFlowGraph;
 use instruction::Instruction;
 use symbol::Symbol;
-
-/// Information about the target of a `CallSite`.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub enum CallSiteTarget {
-    /// The call site directly invokes the function at the `Address`.
-    Direct(Address),
-    /// The call site is indirect, and we haven't yet done further
-    /// analysis.
-    Indirect,
-}
-
-/// Information about a call site.
-#[derive(Clone, Copy, Debug, PartialEq)]
-pub struct CallSite {
-    /// The address of the call site.
-    pub call_site_address: Address,
-    /// Information about the target of the call site.
-    pub target: CallSiteTarget,
-}
 
 /// A function within a program.
 pub struct Function<'f, I: 'f + Instruction> {
@@ -57,64 +38,10 @@ impl<'f, I: Instruction> Function<'f, I> {
             control_flow_graph: cfg,
         }
     }
-
-    /// Get information about the function calls made by this function.
-    pub fn identify_call_sites(&self) -> Vec<CallSite> {
-        self.instructions
-            .iter()
-            .filter(|i| i.is_call())
-            .map(|i| {
-                CallSite {
-                    call_site_address: i.address(),
-                    target: match i.target_address() {
-                        Some(a) => CallSiteTarget::Direct(a),
-                        None => CallSiteTarget::Indirect,
-                    },
-                }
-            })
-            .collect()
-    }
 }
 
-#[cfg(test)]
-mod tests {
-    use address::Address;
-    use super::*;
-    use symbol::Symbol;
-    use tests::*;
-
-    #[test]
-    fn calls_none() {
-        let insts = [TestInstruction::new(0, Opcode::Add),
-                     TestInstruction::new(1, Opcode::Add),
-                     TestInstruction::new(2, Opcode::Ret)];
-        let f = Function::new(Symbol::new(Address::new(100), None), &insts);
-        let calls = f.identify_call_sites();
-        assert!(calls.is_empty());
-    }
-
-    #[test]
-    fn calls_some() {
-        let insts = [TestInstruction::new(0, Opcode::Add),
-                     TestInstruction::new(1, Opcode::Call(Address::new(500))),
-                     TestInstruction::new(2, Opcode::Add),
-                     TestInstruction::new(3, Opcode::Call(Address::new(400))),
-                     TestInstruction::new(4, Opcode::Call(Address::new(500))),
-                     TestInstruction::new(5, Opcode::Ret)];
-        let f = Function::new(Symbol::new(Address::new(100), None), &insts);
-        let calls = f.identify_call_sites();
-        assert_eq!(calls,
-                   vec![CallSite {
-                            call_site_address: Address::new(1),
-                            target: CallSiteTarget::Direct(Address::new(500)),
-                        },
-                        CallSite {
-                            call_site_address: Address::new(3),
-                            target: CallSiteTarget::Direct(Address::new(400)),
-                        },
-                        CallSite {
-                            call_site_address: Address::new(4),
-                            target: CallSiteTarget::Direct(Address::new(500)),
-                        }]);
+impl<'f, I: Instruction> CallGraphAnalysis<I> for Function<'f, I> {
+    fn identify_call_sites(&self) -> Vec<CallSite> {
+        self.identify_call_sites_in_instructions(self.instructions)
     }
 }
