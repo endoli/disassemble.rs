@@ -9,6 +9,25 @@ use cfg::ControlFlowGraph;
 use instruction::Instruction;
 use symbol::Symbol;
 
+/// Information about the target of a `CallSite`.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum CallSiteTarget {
+    /// The call site directly invokes the function at the `Address`.
+    Direct(Address),
+    /// The call site is indirect, and we haven't yet done further
+    /// analysis.
+    Indirect,
+}
+
+/// Information about a call site.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct CallSite {
+    /// The address of the call site.
+    pub call_site_address: Address,
+    /// Information about the target of the call site.
+    pub target: CallSiteTarget,
+}
+
 /// A function within a program.
 pub struct Function<'f, I: 'f + Instruction> {
     /// The [symbol] for this function. This provides the name and [`Address`].
@@ -39,14 +58,20 @@ impl<'f, I: Instruction> Function<'f, I> {
         }
     }
 
-    /// Get the addresses that are called by this function.
-    ///
-    /// This vector may contain duplicates.
-    pub fn calls(&self) -> Vec<Address> {
+    /// Get information about the function calls made by this function.
+    pub fn identify_call_sites(&self) -> Vec<CallSite> {
         self.instructions
             .iter()
             .filter(|i| i.is_call())
-            .filter_map(|i| i.target_address())
+            .map(|i| {
+                CallSite {
+                    call_site_address: i.address(),
+                    target: match i.target_address() {
+                        Some(a) => CallSiteTarget::Direct(a),
+                        None => CallSiteTarget::Indirect,
+                    },
+                }
+            })
             .collect()
     }
 }
@@ -54,7 +79,7 @@ impl<'f, I: Instruction> Function<'f, I> {
 #[cfg(test)]
 mod tests {
     use address::Address;
-    use function::Function;
+    use super::*;
     use symbol::Symbol;
     use tests::*;
 
@@ -64,7 +89,7 @@ mod tests {
                      TestInstruction::new(1, Opcode::Add),
                      TestInstruction::new(2, Opcode::Ret)];
         let f = Function::new(Symbol::new(Address::new(100), None), &insts);
-        let calls = f.calls();
+        let calls = f.identify_call_sites();
         assert!(calls.is_empty());
     }
 
@@ -77,8 +102,19 @@ mod tests {
                      TestInstruction::new(4, Opcode::Call(Address::new(500))),
                      TestInstruction::new(5, Opcode::Ret)];
         let f = Function::new(Symbol::new(Address::new(100), None), &insts);
-        let calls = f.calls();
+        let calls = f.identify_call_sites();
         assert_eq!(calls,
-                   vec![Address::new(500), Address::new(400), Address::new(500)]);
+                   vec![CallSite {
+                            call_site_address: Address::new(1),
+                            target: CallSiteTarget::Direct(Address::new(500)),
+                        },
+                        CallSite {
+                            call_site_address: Address::new(3),
+                            target: CallSiteTarget::Direct(Address::new(400)),
+                        },
+                        CallSite {
+                            call_site_address: Address::new(4),
+                            target: CallSiteTarget::Direct(Address::new(500)),
+                        }]);
     }
 }
