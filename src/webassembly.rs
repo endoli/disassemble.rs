@@ -11,6 +11,7 @@ use super::instruction::Instruction;
 
 impl Instruction for Opcode {
     fn address(&self, _disassembler: &Disassembler) -> Address {
+        // The Opcode enum doesn't include this info.
         Address::new(0)
     }
 
@@ -23,22 +24,40 @@ impl Instruction for Opcode {
     }
 
     fn is_call(&self, _disassembler: &Disassembler) -> bool {
-        false
+        match *self {
+            Opcode::Call(..) |
+            Opcode::CallIndirect(..) => true,
+            _ => false,
+        }
     }
 
     fn is_local_conditional_jump(&self, _disassembler: &Disassembler) -> bool {
-        false
+        match *self {
+            Opcode::If(..) |
+            Opcode::BrIf(..) |
+            Opcode::BrTable(..) => true,
+            _ => false,
+        }
     }
 
     fn is_local_jump(&self, _disassembler: &Disassembler) -> bool {
-        false
+        match *self {
+            Opcode::Br(..) => true,
+            _ => false,
+        }
     }
 
     fn is_return(&self, _disassembler: &Disassembler) -> bool {
-        false
+        match *self {
+            Opcode::Return => true,
+            _ => false,
+        }
     }
 
     fn target_address(&self, _disassembler: &Disassembler) -> Option<Address> {
-        None
+        match *self {
+            Opcode::Call(a) => Some(Address::new(a as u64)),
+            _ => None,
+        }
     }
 }
