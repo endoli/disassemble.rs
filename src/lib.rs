@@ -100,6 +100,9 @@ extern crate petgraph;
 #[cfg(feature = "capstone")]
 extern crate capstone_rust;
 
+#[cfg(feature = "webassembly")]
+extern crate parity_wasm;
+
 mod address;
 mod basicblock;
 mod callgraphanalysis;
@@ -112,6 +115,8 @@ mod instruction;
 mod loops;
 mod memory;
 mod symbol;
+#[cfg(feature = "webassembly")]
+mod webassembly;
 
 pub use self::address::Address;
 pub use self::basicblock::{BasicBlock, BasicBlockEdge, EdgeType};
