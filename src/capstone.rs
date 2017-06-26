@@ -11,7 +11,7 @@ use super::disassembler::{Architecture, Disassembler};
 
 impl Instruction for capstone::Instr {
     fn address(&self, _disassembler: &Disassembler) -> Address {
-        Address::new(0)
+        Address::new(self.address)
     }
 
     fn comment(&self, _disassembler: &Disassembler) -> Option<String> {
