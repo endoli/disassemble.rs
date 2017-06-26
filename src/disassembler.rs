@@ -4,14 +4,12 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use std::fmt;
-
 /// Supported architectures
 #[derive(Debug)]
 pub enum Architecture {
     X86,
 }
 
-pub trait Disassembler: fmt::Debug {
+pub trait Disassembler {
     fn architecture(&self) -> Architecture;
 }

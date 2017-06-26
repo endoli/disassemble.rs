@@ -46,14 +46,14 @@ impl Instruction for capstone::Instr {
 impl From<capstone::cs_arch> for Architecture {
     fn from(arch: capstone::cs_arch) -> Self {
         match arch {
-            cs_arch::CS_ARCH_X86 => X86,
-            _ => panic!("Unexpected arch: {:?}", disassembler.arch),
+            capstone::cs_arch::CS_ARCH_X86 => Architecture::X86,
+            _ => panic!("Unexpected arch: {:?}", arch),
         }
     }
 }
 
 impl Disassembler for capstone::Capstone {
     fn architecture(&self) -> Architecture {
-        self.architecture.into()
+        self.architecture().into()
     }
 }
