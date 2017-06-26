@@ -89,8 +89,7 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
                 next_is_leader = true;
             }
         }
-        self.entry_block =
-            Some(*self.block_finder.get(&instructions[0].address(disassembler)).unwrap());
+        self.entry_block = Some(self.block_finder[&instructions[0].address(disassembler)]);
     }
 
     /// Build an edge between 2 basic blocks.
