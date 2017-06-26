@@ -6,6 +6,7 @@
 
 use callgraphanalysis::{CallGraphAnalysis, CallSite};
 use cfg::ControlFlowGraph;
+use disassembler::Disassembler;
 use instruction::Instruction;
 use symbol::Symbol;
 
@@ -30,8 +31,8 @@ pub struct Function<'f, I: 'f + Instruction> {
 
 impl<'f, I: Instruction> Function<'f, I> {
     /// Construct a new function
-    pub fn new(symbol: Symbol, instructions: &'f [I]) -> Self {
-        let cfg = ControlFlowGraph::new(instructions);
+    pub fn new(symbol: Symbol, instructions: &'f [I], disassembler: &Disassembler) -> Self {
+        let cfg = ControlFlowGraph::new(instructions, disassembler);
         Function {
             symbol: symbol,
             instructions: instructions,
@@ -41,7 +42,7 @@ impl<'f, I: Instruction> Function<'f, I> {
 }
 
 impl<'f, I: Instruction> CallGraphAnalysis<I> for Function<'f, I> {
-    fn identify_call_sites(&self) -> Vec<CallSite> {
-        self.identify_call_sites_in_instructions(self.instructions)
+    fn identify_call_sites(&self, disassembler: &Disassembler) -> Vec<CallSite> {
+        self.identify_call_sites_in_instructions(self.instructions, disassembler)
     }
 }

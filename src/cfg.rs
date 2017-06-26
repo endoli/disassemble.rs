@@ -6,6 +6,7 @@
 
 use address::Address;
 use basicblock::{BasicBlock, BasicBlockEdge, EdgeType};
+use disassembler::Disassembler;
 use instruction::Instruction;
 use petgraph::graph::{Graph, NodeIndex};
 use std::collections::BTreeMap;
@@ -43,15 +44,15 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
     /// subsequently split blocks as we find backward edges.
     ///
     /// [`instructions`]: trait.Instruction.html
-    pub fn new(instructions: &'f [I]) -> Self {
+    pub fn new(instructions: &'f [I], disassembler: &Disassembler) -> Self {
         let mut cfg = ControlFlowGraph {
             graph: Graph::new(),
             entry_block: None,
             block_finder: BTreeMap::new(),
         };
         if !instructions.is_empty() {
-            cfg.identify_blocks(instructions);
-            cfg.build_edges(instructions);
+            cfg.identify_blocks(instructions, disassembler);
+            cfg.build_edges(instructions, disassembler);
         }
         cfg
     }
@@ -66,18 +67,18 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
     ///   for which `Instruction::is_block_terminator` returns `true`.
     /// * It is the target of a jump (conditional or unconditional) within
     ///   the function.
-    fn identify_blocks(&mut self, instructions: &[I]) {
-        let start_addr = instructions[0].address();
-        let end_addr = instructions.last().map(|i| i.address()).unwrap();
+    fn identify_blocks(&mut self, instructions: &[I], disassembler: &Disassembler) {
+        let start_addr = instructions[0].address(disassembler);
+        let end_addr = instructions.last().map(|i| i.address(disassembler)).unwrap();
         let mut next_is_leader: bool = true;
         for inst in instructions {
             if next_is_leader {
-                let idx = self.graph.add_node(BasicBlock::new(inst.address()));
-                self.block_finder.insert(inst.address(), idx);
+                let idx = self.graph.add_node(BasicBlock::new(inst.address(disassembler)));
+                self.block_finder.insert(inst.address(disassembler), idx);
                 next_is_leader = false;
             }
-            if inst.is_block_terminator() {
-                if let Some(target_addr) = inst.target_address() {
+            if inst.is_block_terminator(disassembler) {
+                if let Some(target_addr) = inst.target_address(disassembler) {
                     if !self.block_finder.contains_key(&target_addr) &&
                        target_addr >= start_addr && target_addr <= end_addr {
                         let idx = self.graph.add_node(BasicBlock::new(target_addr));
@@ -88,18 +89,19 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
                 next_is_leader = true;
             }
         }
-        self.entry_block = Some(*self.block_finder.get(&instructions[0].address()).unwrap());
+        self.entry_block = Some(*self.block_finder.get(&instructions[0].address(disassembler)).unwrap());
     }
 
     /// Build an edge between 2 basic blocks.
     fn build_edge(&mut self,
                   current_block_idx: NodeIndex,
                   next_block_idx: NodeIndex,
-                  current_inst: &I) {
-        if current_inst.is_local_conditional_jump() {
+                  current_inst: &I,
+                  disassembler: &Disassembler) {
+        if current_inst.is_local_conditional_jump(disassembler) {
             // We have one edge for the jump target and one for the fallthrough.
             // We jump through some hoops here to keep the borrow checker happy.
-            if let Some(target_addr) = current_inst.target_address() {
+            if let Some(target_addr) = current_inst.target_address(disassembler) {
                 if let Some(target_block_idx) = self.block_finder.get(&target_addr) {
                     let edge = BasicBlockEdge { edge_type: EdgeType::ConditionalTaken };
                     self.graph.add_edge(current_block_idx, *target_block_idx, edge);
@@ -107,10 +109,10 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
                 let edge = BasicBlockEdge { edge_type: EdgeType::ConditionalFallthrough };
                 self.graph.add_edge(current_block_idx, next_block_idx, edge);
             }
-        } else if current_inst.is_local_jump() || current_inst.is_call() {
+        } else if current_inst.is_local_jump(disassembler) || current_inst.is_call(disassembler) {
             let edge = BasicBlockEdge { edge_type: EdgeType::Unconditional };
             self.graph.add_edge(current_block_idx, next_block_idx, edge);
-        } else if current_inst.is_return() {
+        } else if current_inst.is_return(disassembler) {
             // Do we want to record this exit anywhere?
         }
     }
@@ -123,7 +125,7 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
     /// We do this by iterating through the instructions looking for
     /// boundaries between the basic blocks and then setting up the
     /// new edges.
-    fn build_edges(&mut self, instructions: &'f [I]) {
+    fn build_edges(&mut self, instructions: &'f [I], disassembler: &Disassembler) {
         // Here, we're going to walk through the instructions again,
         // looking at the current instruction, while also maintaining
         // a separate iterator giving us the next instruction (if there
@@ -141,12 +143,12 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
             if let Some(next_inst) = next_inst_iter.next() {
                 // Does the next instruction begin a basic block?
                 let next_block_idx =
-                    *self.block_finder.get(&next_inst.address()).unwrap_or(&current_block_idx);
+                    *self.block_finder.get(&next_inst.address(disassembler)).unwrap_or(&current_block_idx);
                 // If we're at a block boundary, create an edge between the
                 // current and next blocks. The type of the edge is determined
                 // by looking at the current instruction.
                 if next_block_idx != current_block_idx {
-                    self.build_edge(current_block_idx, next_block_idx, current_inst);
+                    self.build_edge(current_block_idx, next_block_idx, current_inst, disassembler);
                     current_block_idx = next_block_idx;
                 }
             } else {
@@ -166,7 +168,8 @@ mod tests {
     #[test]
     fn construct() {
         let insts: Vec<TestInstruction> = vec![];
-        let cfg = ControlFlowGraph::new(&insts);
+        let disasm = TestDisassembler::new();
+        let cfg = ControlFlowGraph::new(&insts, &disasm);
         assert!(cfg.entry_block.is_none());
         assert_eq!(cfg.graph.node_count(), 0);
     }
@@ -176,7 +179,8 @@ mod tests {
         let insts = [TestInstruction::new(0, Opcode::Add),
                      TestInstruction::new(1, Opcode::Add),
                      TestInstruction::new(2, Opcode::Ret)];
-        let cfg = ControlFlowGraph::new(&insts);
+        let disasm = TestDisassembler::new();
+        let cfg = ControlFlowGraph::new(&insts, &disasm);
         assert!(cfg.entry_block.is_some());
         assert_eq!(cfg.graph.node_count(), 1);
 
