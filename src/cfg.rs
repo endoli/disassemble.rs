@@ -89,7 +89,8 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
                 next_is_leader = true;
             }
         }
-        self.entry_block = Some(*self.block_finder.get(&instructions[0].address(disassembler)).unwrap());
+        self.entry_block =
+            Some(*self.block_finder.get(&instructions[0].address(disassembler)).unwrap());
     }
 
     /// Build an edge between 2 basic blocks.
@@ -142,13 +143,17 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
             }
             if let Some(next_inst) = next_inst_iter.next() {
                 // Does the next instruction begin a basic block?
-                let next_block_idx =
-                    *self.block_finder.get(&next_inst.address(disassembler)).unwrap_or(&current_block_idx);
+                let next_block_idx = *self.block_finder
+                                          .get(&next_inst.address(disassembler))
+                                          .unwrap_or(&current_block_idx);
                 // If we're at a block boundary, create an edge between the
                 // current and next blocks. The type of the edge is determined
                 // by looking at the current instruction.
                 if next_block_idx != current_block_idx {
-                    self.build_edge(current_block_idx, next_block_idx, current_inst, disassembler);
+                    self.build_edge(current_block_idx,
+                                    next_block_idx,
+                                    current_inst,
+                                    disassembler);
                     current_block_idx = next_block_idx;
                 }
             } else {

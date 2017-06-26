@@ -35,7 +35,10 @@ pub trait CallGraphAnalysis<I: Instruction> {
     /// Get information about the function calls made within a set of instructions.
     ///
     /// This is meant to be called by implementations of this trait.
-    fn identify_call_sites_in_instructions(&self, instructions: &[I], disassembler: &Disassembler) -> Vec<CallSite> {
+    fn identify_call_sites_in_instructions(&self,
+                                           instructions: &[I],
+                                           disassembler: &Disassembler)
+                                           -> Vec<CallSite> {
         instructions.iter()
             .filter(|i| i.is_call(disassembler))
             .map(|i| {

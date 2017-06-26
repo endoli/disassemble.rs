@@ -41,7 +41,8 @@ pub trait Instruction: fmt::Debug {
     ///
     /// [`BasicBlock`]: struct.BasicBlock.html
     fn is_block_terminator(&self, disassembler: &Disassembler) -> bool {
-        self.is_call(disassembler) || self.is_local_jump(disassembler) || self.is_return(disassembler)
+        self.is_call(disassembler) || self.is_local_jump(disassembler) ||
+        self.is_return(disassembler)
     }
 
     /// Does this instruction represent a call?

@@ -225,7 +225,7 @@ mod tests {
 
     impl TestDisassembler {
         pub fn new() -> Self {
-            TestDisassembler{}
+            TestDisassembler {}
         }
     }
 
