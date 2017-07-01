@@ -166,8 +166,11 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
 #[cfg(test)]
 mod tests {
     use petgraph::EdgeDirection;
+    use petgraph::graph::NodeIndex;
     use super::ControlFlowGraph;
     use tests::*;
+    use address::Address;
+    use std::collections::HashSet;
 
     #[test]
     fn construct() {
@@ -193,5 +196,155 @@ mod tests {
 
         let outbound = cfg.graph.externals(EdgeDirection::Outgoing);
         assert_eq!(outbound.count(), 1);
+    }
+
+    #[test]
+    fn build_cfg_containing_local_unconditional_jump() {
+        let insts = [
+            TestInstruction::new(0, Opcode::Add),
+            TestInstruction::new(1, Opcode::CJmp(Address::new(4))),
+            TestInstruction::new(2, Opcode::Add),
+            TestInstruction::new(3, Opcode::Jmp(Address::new(5))),
+            TestInstruction::new(4, Opcode::Add),
+            TestInstruction::new(5, Opcode::Ret),
+        ];
+
+        let disasm = TestDisassembler::new();
+        let cfg = ControlFlowGraph::new(&insts, &disasm);
+
+        assert_eq!(4, cfg.graph.edge_count());
+        assert_eq!(4, cfg.graph.node_count());
+
+        let root_idx = *cfg.block_finder.get(&Address::new(0)).unwrap();
+        let cond_taken_idx = *cfg.block_finder.get(&Address::new(4)).unwrap();
+        let falltrough_idx = *cfg.block_finder.get(&Address::new(2)).unwrap();
+        let ret_idx = *cfg.block_finder.get(&Address::new(5)).unwrap();
+
+        let neighbours = cfg.graph.neighbors(root_idx).into_iter().collect();
+        assert_neighbours(neighbours, vec![cond_taken_idx, falltrough_idx]);
+
+        let neighbours = cfg.graph.neighbors(cond_taken_idx).into_iter().collect();
+        assert_neighbours(neighbours, vec![ret_idx]);
+
+        let neighbours = cfg.graph.neighbors(falltrough_idx).into_iter().collect();
+        assert_neighbours(neighbours, vec![ret_idx]);
+
+        let neighbours = cfg.graph.neighbors(ret_idx).into_iter().collect();
+        assert_neighbours(neighbours, vec![]);
+    }
+
+    #[test]
+    fn build_cfg_with_goto_ending() {
+        let insts = [
+            TestInstruction::new(0, Opcode::Add),
+            TestInstruction::new(1, Opcode::CJmp(Address::new(3))),
+            TestInstruction::new(2, Opcode::Ret),
+            TestInstruction::new(3, Opcode::Jmp(Address::new(2))),
+        ];
+
+        let disasm = TestDisassembler::new();
+        let cfg = ControlFlowGraph::new(&insts, &disasm);
+
+        assert_eq!(3, cfg.graph.edge_count());
+        assert_eq!(3, cfg.graph.node_count());
+
+        let root_idx = *cfg.block_finder.get(&Address::new(0)).unwrap();
+        let ret_idx = *cfg.block_finder.get(&Address::new(2)).unwrap();
+        let goto_idx = *cfg.block_finder.get(&Address::new(3)).unwrap();
+
+        let neighbours = cfg.graph.neighbors(root_idx).into_iter().collect();
+        assert_neighbours(neighbours, vec![ret_idx, goto_idx]);
+
+        let neighbours = cfg.graph.neighbors(ret_idx).into_iter().collect();
+        assert_neighbours(neighbours, vec![]);
+
+        let neighbours = cfg.graph.neighbors(goto_idx).into_iter().collect();
+        assert_neighbours(neighbours, vec![ret_idx]);
+    }
+
+    #[test]
+    fn build_cfg_with_branch_ending() {
+        let insts = [
+            TestInstruction::new(0, Opcode::Add),
+            TestInstruction::new(1, Opcode::CJmp(Address::new(0))),
+        ];
+
+        let disasm = TestDisassembler::new();
+        let cfg = ControlFlowGraph::new(&insts, &disasm);
+
+        assert_eq!(1, cfg.graph.edge_count());
+        assert_eq!(1, cfg.graph.node_count());
+
+        let root_idx = *cfg.block_finder.get(&Address::new(0)).unwrap();
+
+        let neighbours = cfg.graph.neighbors(root_idx).into_iter().collect();
+        assert_neighbours(neighbours, vec![root_idx]);
+    }
+
+    #[test]
+    fn build_cfg_with_call_ending() {
+        let insts = [
+            TestInstruction::new(0, Opcode::Add),
+            TestInstruction::new(1, Opcode::Call(Address::new(0))),
+        ];
+
+        let disasm = TestDisassembler::new();
+        let cfg = ControlFlowGraph::new(&insts, &disasm);
+
+        assert_eq!(0, cfg.graph.edge_count());
+        assert_eq!(1, cfg.graph.node_count());
+    }
+
+    #[test]
+    fn build_cfg_with_call_before_return() {
+        let insts = [
+            TestInstruction::new(0, Opcode::Add),
+            TestInstruction::new(1, Opcode::Call(Address::new(0))),
+            TestInstruction::new(2, Opcode::Ret),
+        ];
+
+        let disasm = TestDisassembler::new();
+        let cfg = ControlFlowGraph::new(&insts, &disasm);
+
+        assert_eq!(1, cfg.graph.edge_count());
+        assert_eq!(2, cfg.graph.node_count());
+
+        let root_idx = *cfg.block_finder.get(&Address::new(0)).unwrap();
+        let ret_idx = *cfg.block_finder.get(&Address::new(2)).unwrap();
+
+        let neighbours = cfg.graph.neighbors(root_idx).into_iter().collect();
+        assert_neighbours(neighbours, vec![ret_idx]);
+    }
+
+    #[test]
+    fn build_cfg_with_regular_instruction_ending() {
+        let insts = [
+            TestInstruction::new(0, Opcode::Add),
+            TestInstruction::new(1, Opcode::Jmp(Address::new(2))),
+            TestInstruction::new(2, Opcode::Add),
+        ];
+
+        let disasm = TestDisassembler::new();
+        let cfg = ControlFlowGraph::new(&insts, &disasm);
+
+        assert_eq!(1, cfg.graph.edge_count());
+        assert_eq!(2, cfg.graph.node_count());
+
+        let root_idx = *cfg.block_finder.get(&Address::new(0)).unwrap();
+        let add_idx = *cfg.block_finder.get(&Address::new(2)).unwrap();
+
+        let neighbours = cfg.graph.neighbors(root_idx).into_iter().collect();
+        assert_neighbours(neighbours, vec![add_idx]);
+    }
+
+    fn assert_neighbours(actual: Vec<NodeIndex>, expected: Vec<NodeIndex>) {
+        let actual_set: HashSet<NodeIndex> = actual.into_iter().collect();
+        let expected_set: HashSet<NodeIndex> = expected.into_iter().collect();
+
+        let diff = actual_set.difference(&expected_set);
+
+        if diff.count() != 0 {
+            assert_eq!(actual_set, expected_set);
+        }
     }
 }
