@@ -127,6 +127,7 @@ pub use self::instruction::Instruction;
 pub use self::loops::{find_loops, LoopStructureGraph, SimpleLoop};
 pub use self::memory::{Error, Memory, Segment};
 pub use self::symbol::Symbol;
+pub use self::disassembler::{Disassembler, Architecture};
 
 #[cfg(test)]
 mod tests {
