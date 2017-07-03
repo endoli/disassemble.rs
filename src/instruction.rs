@@ -6,7 +6,6 @@
 
 use std::fmt;
 use address::Address;
-use disassembler::Disassembler;
 
 /// An assembly instruction, bytecode operation, VM operation, etc.
 ///
@@ -25,13 +24,13 @@ pub trait Instruction: fmt::Debug {
     ///
     /// [`address`]: struct.Address.html
     /// [`function`]: struct.Function.html
-    fn address(&self, disassembler: &Disassembler) -> Address;
+    fn address(&self) -> Address;
 
     /// Any associated `comment` text for this instruction.
-    fn comment(&self, disassembler: &Disassembler) -> Option<String>;
+    fn comment(&self) -> Option<String>;
 
     /// How many cycles does this instruction take to execute?
-    fn cycle_count(&self, disassembler: &Disassembler) -> Option<u32>;
+    fn cycle_count(&self) -> Option<u32>;
 
     /// Does this instruction terminate a `BasicBlock`?
     ///
@@ -40,23 +39,22 @@ pub trait Instruction: fmt::Debug {
     /// blocks.
     ///
     /// [`BasicBlock`]: struct.BasicBlock.html
-    fn is_block_terminator(&self, disassembler: &Disassembler) -> bool {
-        self.is_call(disassembler) || self.is_local_jump(disassembler) ||
-        self.is_return(disassembler)
+    fn is_block_terminator(&self) -> bool {
+        self.is_call() || self.is_local_jump() || self.is_return()
     }
 
     /// Does this instruction represent a call?
-    fn is_call(&self, disassembler: &Disassembler) -> bool;
+    fn is_call(&self) -> bool;
 
     /// Does this instruction represent a local conditional jump?
-    fn is_local_conditional_jump(&self, disassembler: &Disassembler) -> bool;
+    fn is_local_conditional_jump(&self) -> bool;
 
     /// Does this instruction represent a local conditional or unconditional jump?
-    fn is_local_jump(&self, disassembler: &Disassembler) -> bool;
+    fn is_local_jump(&self) -> bool;
 
     /// Does this instruction represent a function return?
-    fn is_return(&self, disassembler: &Disassembler) -> bool;
+    fn is_return(&self) -> bool;
 
     /// If this is a call or local jump, what is the target address?
-    fn target_address(&self, disassembler: &Disassembler) -> Option<Address>;
+    fn target_address(&self) -> Option<Address>;
 }
