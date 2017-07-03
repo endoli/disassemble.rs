@@ -6,7 +6,6 @@
 
 use address::Address;
 use instruction::Instruction;
-use disassembler::Disassembler;
 
 /// Information about the target of a `CallSite`.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -30,21 +29,20 @@ pub struct CallSite {
 /// Assist in performing call graph analysis.
 pub trait CallGraphAnalysis<I: Instruction> {
     /// Get information about the function calls made.
-    fn identify_call_sites(&self, disassembler: &Disassembler) -> Vec<CallSite>;
+    fn identify_call_sites(&self) -> Vec<CallSite>;
 
     /// Get information about the function calls made within a set of instructions.
     ///
     /// This is meant to be called by implementations of this trait.
     fn identify_call_sites_in_instructions(&self,
-                                           instructions: &[I],
-                                           disassembler: &Disassembler)
+                                           instructions: &[I])
                                            -> Vec<CallSite> {
         instructions.iter()
-            .filter(|i| i.is_call(disassembler))
+            .filter(|i| i.is_call())
             .map(|i| {
                 CallSite {
-                    call_site_address: i.address(disassembler),
-                    target: match i.target_address(disassembler) {
+                    call_site_address: i.address(),
+                    target: match i.target_address() {
                         Some(a) => CallSiteTarget::Direct(a),
                         None => CallSiteTarget::Indirect,
                     },
@@ -67,9 +65,8 @@ mod tests {
         let insts = [TestInstruction::new(0, Opcode::Add),
                      TestInstruction::new(1, Opcode::Add),
                      TestInstruction::new(2, Opcode::Ret)];
-        let disasm = TestDisassembler::new();
-        let f = Function::new(Symbol::new(Address::new(100), None), &insts, &disasm);
-        let calls = f.identify_call_sites(&disasm);
+        let f = Function::new(Symbol::new(Address::new(100), None), &insts);
+        let calls = f.identify_call_sites();
         assert!(calls.is_empty());
     }
 
@@ -81,9 +78,8 @@ mod tests {
                      TestInstruction::new(3, Opcode::Call(Address::new(400))),
                      TestInstruction::new(4, Opcode::Call(Address::new(500))),
                      TestInstruction::new(5, Opcode::Ret)];
-        let disasm = TestDisassembler::new();
-        let f = Function::new(Symbol::new(Address::new(100), None), &insts, &disasm);
-        let calls = f.identify_call_sites(&disasm);
+        let f = Function::new(Symbol::new(Address::new(100), None), &insts);
+        let calls = f.identify_call_sites();
         assert_eq!(calls,
                    vec![CallSite {
                             call_site_address: Address::new(1),

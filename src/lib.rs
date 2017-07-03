@@ -109,7 +109,6 @@ mod callgraphanalysis;
 #[cfg(feature = "capstone")]
 mod capstone;
 mod cfg;
-mod disassembler;
 mod function;
 mod instruction;
 mod loops;
@@ -127,7 +126,6 @@ pub use self::instruction::Instruction;
 pub use self::loops::{find_loops, LoopStructureGraph, SimpleLoop};
 pub use self::memory::{Error, Memory, Segment};
 pub use self::symbol::Symbol;
-pub use self::disassembler::{Disassembler, Architecture};
 
 #[cfg(test)]
 mod tests {
@@ -139,7 +137,6 @@ mod tests {
 
     use address::Address;
     use instruction::Instruction;
-    use disassembler::{Architecture, Disassembler};
 
     /// Opcodes that we'll use as instructions.
     #[allow(dead_code, missing_docs)]
@@ -170,33 +167,33 @@ mod tests {
     }
 
     impl Instruction for TestInstruction {
-        fn address(&self, _disassembler: &Disassembler) -> Address {
+        fn address(&self) -> Address {
             self.address
         }
 
-        fn comment(&self, _disassembler: &Disassembler) -> Option<String> {
+        fn comment(&self) -> Option<String> {
             None
         }
 
-        fn cycle_count(&self, _disassembler: &Disassembler) -> Option<u32> {
+        fn cycle_count(&self) -> Option<u32> {
             None
         }
 
-        fn is_call(&self, _disassembler: &Disassembler) -> bool {
+        fn is_call(&self) -> bool {
             match self.opcode {
                 Opcode::Call(..) => true,
                 _ => false,
             }
         }
 
-        fn is_local_conditional_jump(&self, _disassembler: &Disassembler) -> bool {
+        fn is_local_conditional_jump(&self) -> bool {
             match self.opcode {
                 Opcode::CJmp(..) => true,
                 _ => false,
             }
         }
 
-        fn is_local_jump(&self, _disassembler: &Disassembler) -> bool {
+        fn is_local_jump(&self) -> bool {
             match self.opcode {
                 Opcode::CJmp(..) => true,
                 Opcode::Jmp(..) => true,
@@ -204,35 +201,20 @@ mod tests {
             }
         }
 
-        fn is_return(&self, _disassembler: &Disassembler) -> bool {
+        fn is_return(&self) -> bool {
             match self.opcode {
                 Opcode::Ret => true,
                 _ => false,
             }
         }
 
-        fn target_address(&self, _disassembler: &Disassembler) -> Option<Address> {
+        fn target_address(&self) -> Option<Address> {
             match self.opcode {
                 Opcode::CJmp(addr) => Some(addr),
                 Opcode::Jmp(addr) => Some(addr),
                 Opcode::Call(addr) => Some(addr),
                 _ => None,
             }
-        }
-    }
-
-    #[derive(Debug)]
-    pub struct TestDisassembler {}
-
-    impl TestDisassembler {
-        pub fn new() -> Self {
-            TestDisassembler {}
-        }
-    }
-
-    impl Disassembler for TestDisassembler {
-        fn architecture(&self) -> Architecture {
-            Architecture::X86
         }
     }
 }
