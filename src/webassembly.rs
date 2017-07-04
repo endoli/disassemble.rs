@@ -8,10 +8,23 @@ use parity_wasm::elements::Opcode;
 use super::address::Address;
 use super::instruction::Instruction;
 
-impl Instruction for Opcode {
+#[allow(missing_docs)]
+#[derive(Debug)]
+pub struct WasmInstruction {
+    idx: u64,
+    op: Opcode,
+}
+
+impl WasmInstruction {
+    #[allow(missing_docs)]
+    pub fn new(idx: u64, op: Opcode) -> Self {
+        WasmInstruction { idx, op }
+    }
+}
+
+impl Instruction for WasmInstruction {
     fn address(&self) -> Address {
-        // The Opcode enum doesn't include this info.
-        Address::new(0)
+        Address::new(self.idx)
     }
 
     fn comment(&self) -> Option<String> {
@@ -23,7 +36,7 @@ impl Instruction for Opcode {
     }
 
     fn is_call(&self) -> bool {
-        match *self {
+        match self.op {
             Opcode::Call(..) |
             Opcode::CallIndirect(..) => true,
             _ => false,
@@ -31,7 +44,7 @@ impl Instruction for Opcode {
     }
 
     fn is_local_conditional_jump(&self) -> bool {
-        match *self {
+        match self.op {
             Opcode::If(..) |
             Opcode::BrIf(..) |
             Opcode::BrTable(..) => true,
@@ -40,21 +53,21 @@ impl Instruction for Opcode {
     }
 
     fn is_local_jump(&self) -> bool {
-        match *self {
+        match self.op {
             Opcode::Br(..) => true,
             _ => false,
         }
     }
 
     fn is_return(&self) -> bool {
-        match *self {
+        match self.op {
             Opcode::Return => true,
             _ => false,
         }
     }
 
     fn target_address(&self) -> Option<Address> {
-        match *self {
+        match self.op {
             Opcode::Call(a) => Some(Address::new(a as u64)),
             _ => None,
         }
