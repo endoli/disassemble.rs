@@ -68,10 +68,7 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
     ///   the function.
     fn identify_blocks(&mut self, instructions: &[I]) {
         let start_addr = instructions[0].address();
-        let end_addr = instructions
-            .last()
-            .map(|i| i.address())
-            .unwrap();
+        let end_addr = instructions.last().map(|i| i.address()).unwrap();
         let mut next_is_leader: bool = true;
         for inst in instructions {
             if next_is_leader {
@@ -184,18 +181,14 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
             }
             if let Some(next_inst) = next_inst_iter.next() {
                 // Does the next instruction begin a basic block?
-                let next_block_idx = *self.block_finder
-                    .get(&next_inst.address())
-                    .unwrap_or(&current_block_idx);
+                let next_block_idx = *self.block_finder.get(&next_inst.address()).unwrap_or(
+                    &current_block_idx,
+                );
                 // If we're at a block boundary, create an edge between the
                 // current and next blocks. The type of the edge is determined
                 // by looking at the current instruction.
                 if next_block_idx != current_block_idx {
-                    self.build_edge(
-                        current_block_idx,
-                        Some(next_block_idx),
-                        current_inst,
-                    );
+                    self.build_edge(current_block_idx, Some(next_block_idx), current_inst);
                     current_block_idx = next_block_idx;
                 }
             } else {

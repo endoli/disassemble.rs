@@ -27,7 +27,10 @@ pub struct SimpleLoop<'lsg> {
 
 impl<'lsg> SimpleLoop<'lsg> {
     pub fn new(counter: usize) -> Self {
-        SimpleLoop { counter: counter, ..Default::default() }
+        SimpleLoop {
+            counter: counter,
+            ..Default::default()
+        }
     }
 }
 
@@ -85,9 +88,10 @@ impl<'lsg> Default for LoopStructureGraph<'lsg> {
 /// Variable names and step numbering has been chosen to be identical
 /// to the nomenclature in Havlak's paper (which, in turn, is similar
 /// to the one used by Tarjan).
-pub fn find_loops<'havlak, I: Instruction>(cfg: &'havlak ControlFlowGraph<'havlak, I>,
-                                           _lsg: &'havlak mut LoopStructureGraph<'havlak>)
-                                           -> usize {
+pub fn find_loops<'havlak, I: Instruction>(
+    cfg: &'havlak ControlFlowGraph<'havlak, I>,
+    _lsg: &'havlak mut LoopStructureGraph<'havlak>,
+) -> usize {
     if cfg.entry_block.is_none() {
         return 0;
     }
