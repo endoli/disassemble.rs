@@ -141,11 +141,9 @@ mod tests {
     use instruction::Instruction;
 
     /// Opcodes that we'll use as instructions.
-    #[allow(dead_code, missing_docs)]
     #[derive(Debug)]
     pub enum Opcode {
         Add,
-        Mul,
         CJmp(Address),
         Jmp(Address),
         Call(Address),
