@@ -26,6 +26,9 @@ pub trait Instruction: fmt::Debug {
     /// [`function`]: struct.Function.html
     fn address(&self) -> Address;
 
+    /// The mnemonic for this `Instruction`.
+    fn mnemonic(&self) -> &str;
+
     /// Any associated `comment` text for this instruction.
     fn comment(&self) -> Option<String>;
 

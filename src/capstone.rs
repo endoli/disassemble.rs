@@ -39,6 +39,10 @@ impl Instruction for capstone::Instr {
         None
     }
 
+    fn mnemonic(&self) -> &str {
+        &*self.mnemonic
+    }
+
     fn cycle_count(&self) -> Option<u32> {
         None
     }
