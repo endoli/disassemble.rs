@@ -175,6 +175,16 @@ mod tests {
             None
         }
 
+        fn mnemonic(&self) -> &str {
+            match self.opcode {
+                Opcode::Add => "add",
+                Opcode::CJmp(..) => "conditional-jump",
+                Opcode::Jmp(..) => "jump",
+                Opcode::Call(..) => "call",
+                Opcode::Ret => "return",
+            }
+        }
+
         fn cycle_count(&self) -> Option<u32> {
             None
         }
