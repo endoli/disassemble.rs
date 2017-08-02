@@ -18,4 +18,4 @@ all = ["capstone", "webassembly"]
 [dependencies]
 petgraph = "0.4.4"
 capstone_rust = { version = "0.2", optional = true }
-parity-wasm = { version = "0.12", optional = true }
+parity-wasm = { version = "0.14", optional = true }
