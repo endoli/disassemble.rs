@@ -133,6 +133,11 @@ pub use self::target::Target;
 #[cfg(feature = "webassembly")]
 pub use self::webassembly::WasmInstruction;
 
+#[cfg(feature = "bpf")]
+mod bpf;
+#[cfg(feature = "bpf")]
+pub use self::bpf::BpfInstruction;
+
 #[cfg(test)]
 mod tests {
     //! Test Instructions
