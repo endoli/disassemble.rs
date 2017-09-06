@@ -113,7 +113,9 @@ mod function;
 mod instruction;
 mod loops;
 mod memory;
+mod module;
 mod symbol;
+mod target;
 #[cfg(feature = "webassembly")]
 mod webassembly;
 
@@ -125,7 +127,9 @@ pub use self::function::Function;
 pub use self::instruction::Instruction;
 pub use self::loops::{find_loops, LoopStructureGraph, SimpleLoop};
 pub use self::memory::{Error, Memory, Segment};
+pub use self::module::Module;
 pub use self::symbol::Symbol;
+pub use self::target::Target;
 #[cfg(feature = "webassembly")]
 pub use self::webassembly::WasmInstruction;
 
