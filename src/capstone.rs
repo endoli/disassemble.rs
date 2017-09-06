@@ -23,7 +23,7 @@ where
                         None => false,
                     }
                 }
-                _ => false, // XXX Not supported yet
+                _ => unimplemented!(),
             }
         }
     }
@@ -54,13 +54,13 @@ impl Instruction for capstone::Instr {
     fn is_local_conditional_jump(&self) -> bool {
         self.is_local_jump() &&
             match self.id {
-                capstone::InstrIdArch::X86(x86_insn::X86_INS_JMP) => false,
-                capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOP) => false,
-                capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOPE) => false,
-                capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOPNE) => false,
-                capstone::InstrIdArch::X86(x86_insn::X86_INS_XBEGIN) => false,
+                capstone::InstrIdArch::X86(x86_insn::X86_INS_JMP) |
+                capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOP) |
+                capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOPE) |
+                capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOPNE) |
+                capstone::InstrIdArch::X86(x86_insn::X86_INS_XBEGIN) |
                 capstone::InstrIdArch::X86(_) => true,
-                _ => false, // XXX Not supported yet
+                _ => unimplemented!(),
             }
     }
 
@@ -69,7 +69,7 @@ impl Instruction for capstone::Instr {
             match self.id {
                 capstone::InstrIdArch::X86(x86_insn::X86_INS_LJMP) => false,
                 capstone::InstrIdArch::X86(_) => true,
-                _ => false, // XXX Not supported yet
+                _ => unimplemented!(),
             }
     }
 

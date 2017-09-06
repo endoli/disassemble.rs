@@ -245,7 +245,7 @@ impl Instruction for WasmInstruction {
 
     fn target_address(&self) -> Option<Address> {
         match self.op {
-            Opcode::Call(a) => Some(Address::new(a as u64)),
+            Opcode::Call(a) => Some(Address::new(u64::from(a))),
             _ => None,
         }
     }
