@@ -25,7 +25,7 @@ pub struct Function<'f, I: 'f + Instruction> {
     ///
     /// [basic blocks]: struct.BasicBlock.html
     /// [control flow graph]: struct.ControlFlowGraph.html
-    pub control_flow_graph: ControlFlowGraph<'f, I>,
+    pub control_flow_graph: ControlFlowGraph,
 }
 
 impl<'f, I: Instruction> Function<'f, I> {

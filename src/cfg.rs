@@ -13,11 +13,11 @@ use std::collections::BTreeMap;
 /// A [control flow graph].
 ///
 /// [control flow graph]: https://en.wikipedia.org/wiki/Control_flow_graph
-pub struct ControlFlowGraph<'f, I: 'f + Instruction> {
+pub struct ControlFlowGraph {
     /// The [`Graph`] that stores the actual ControlFlowGraph
     ///
     /// [`Graph`]: ../petgraph/graph/struct.Graph.html
-    pub graph: Graph<BasicBlock<'f, I>, BasicBlockEdge>,
+    pub graph: Graph<BasicBlock, BasicBlockEdge>,
     /// The [`NodeIndex`] for the entry [`BasicBlock`] for this function.
     ///
     /// [`BasicBlock`]: struct.BasicBlock.html
@@ -30,7 +30,7 @@ pub struct ControlFlowGraph<'f, I: 'f + Instruction> {
     pub block_finder: BTreeMap<Address, NodeIndex>,
 }
 
-impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
+impl ControlFlowGraph {
     /// Build the ControlFlowGraph from the [`instructions`].
     ///
     /// This is conducted in a 2 step process:
@@ -43,7 +43,7 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
     /// subsequently split blocks as we find backward edges.
     ///
     /// [`instructions`]: trait.Instruction.html
-    pub fn new(instructions: &'f [I]) -> Self {
+    pub fn new<I: Instruction>(instructions: &[I]) -> Self {
         let mut cfg = ControlFlowGraph {
             graph: Graph::new(),
             entry_block: None,
@@ -66,7 +66,7 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
     ///   for which `Instruction::is_block_terminator` returns `true`.
     /// * It is the target of a jump (conditional or unconditional) within
     ///   the function.
-    fn identify_blocks(&mut self, instructions: &[I]) {
+    fn identify_blocks<I: Instruction>(&mut self, instructions: &[I]) {
         let start_addr = instructions[0].address();
         let end_addr = instructions.last().map(|i| i.address()).unwrap();
         let mut next_is_leader: bool = true;
@@ -99,7 +99,7 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
     }
 
     /// Build an edge between 2 basic blocks.
-    fn build_edge(
+    fn build_edge<I: Instruction>(
         &mut self,
         current_block_idx: NodeIndex,
         next_block_idx: Option<NodeIndex>,
@@ -164,7 +164,7 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
     /// We do this by iterating through the instructions looking for
     /// boundaries between the basic blocks and then setting up the
     /// new edges.
-    fn build_edges(&mut self, instructions: &'f [I]) {
+    fn build_edges<I: Instruction>(&mut self, instructions: &[I]) {
         // Here, we're going to walk through the instructions again,
         // looking at the current instruction, while also maintaining
         // a separate iterator giving us the next instruction (if there
@@ -174,10 +174,10 @@ impl<'f, I: Instruction> ControlFlowGraph<'f, I> {
         // Skip the first one so that we're actually working with the next one.
         next_inst_iter.next();
         let mut current_block_idx = self.entry_block.unwrap();
-        for current_inst in current_inst_iter {
+        for (current_inst_idx, current_inst) in current_inst_iter.enumerate() {
             // Add this instruction to the current block
             if let Some(current_block) = self.graph.node_weight_mut(current_block_idx) {
-                current_block.instructions.push(current_inst);
+                current_block.instruction_indices.push(current_inst_idx);
             }
             if let Some(next_inst) = next_inst_iter.next() {
                 // Does the next instruction begin a basic block?

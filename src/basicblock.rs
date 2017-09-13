@@ -5,7 +5,6 @@
 // except according to those terms.
 
 use address::Address;
-use instruction::Instruction;
 
 /// When is this edge taken? Conditionally or unconditionally?
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -24,22 +23,22 @@ pub enum EdgeType {
 ///
 /// [basic block]: https://en.wikipedia.org/wiki/Basic_block
 #[derive(Debug)]
-pub struct BasicBlock<'f, I: 'f + Instruction> {
+pub struct BasicBlock {
     /// The name of the basic block. Not all blocks have meaningful names.
     pub name: Option<String>,
     /// The address of the first instruction in the basic block.
     pub address: Address,
-    /// The instructions within this basic block.
-    pub instructions: Vec<&'f I>,
+    /// The indices instructions within this basic block.
+    pub instruction_indices: Vec<usize>,
 }
 
-impl<'f, I: Instruction> BasicBlock<'f, I> {
+impl BasicBlock {
     /// Construct a new `BasicBlock`.
     pub fn new(address: Address) -> Self {
         BasicBlock {
             name: None,
             address: address,
-            instructions: vec![],
+            instruction_indices: vec![],
         }
     }
 }
