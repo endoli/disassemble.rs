@@ -7,7 +7,7 @@
 use super::{Module, Instruction};
 
 /// An executable.
-pub struct Target<'f, I: 'f + Instruction> {
+pub struct Target<I: Instruction> {
     /// Modules used by this target.
-    pub modules: Vec<Module<'f, I>>,
+    pub modules: Vec<Module<I>>,
 }

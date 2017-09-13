@@ -34,7 +34,7 @@ pub trait CallGraphAnalysis<I: Instruction> {
     /// Get information about the function calls made within a set of instructions.
     ///
     /// This is meant to be called by implementations of this trait.
-    fn identify_call_sites_in_instructions(&self, instructions: &[I]) -> Vec<CallSite> {
+    fn identify_call_sites_in_instructions(&self, instructions: &Vec<I>) -> Vec<CallSite> {
         instructions
             .iter()
             .filter(|i| i.is_call())
@@ -61,19 +61,19 @@ mod tests {
 
     #[test]
     fn calls_none() {
-        let insts = [
+        let insts = vec![
             TestInstruction::new(0, Opcode::Add),
             TestInstruction::new(1, Opcode::Add),
             TestInstruction::new(2, Opcode::Ret),
         ];
-        let f = Function::new(Symbol::new(Address::new(100), None), &insts);
+        let f = Function::new(Symbol::new(Address::new(100), None), insts);
         let calls = f.identify_call_sites();
         assert!(calls.is_empty());
     }
 
     #[test]
     fn calls_some() {
-        let insts = [
+        let insts = vec![
             TestInstruction::new(0, Opcode::Add),
             TestInstruction::new(1, Opcode::Call(Address::new(500))),
             TestInstruction::new(2, Opcode::Add),
@@ -81,7 +81,7 @@ mod tests {
             TestInstruction::new(4, Opcode::Call(Address::new(500))),
             TestInstruction::new(5, Opcode::Ret),
         ];
-        let f = Function::new(Symbol::new(Address::new(100), None), &insts);
+        let f = Function::new(Symbol::new(Address::new(100), None), insts);
         let calls = f.identify_call_sites();
         assert_eq!(
             calls,

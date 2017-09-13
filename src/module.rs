@@ -7,7 +7,7 @@
 use super::{Function, Instruction};
 
 /// A shared library or other component of a target.
-pub struct Module<'f, I: 'f + Instruction> {
+pub struct Module<I: Instruction> {
     /// Functions defined within this module
-    pub functions: Vec<Function<'f, I>>,
+    pub functions: Vec<Function<I>>,
 }

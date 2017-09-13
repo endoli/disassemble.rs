@@ -10,7 +10,7 @@ use instruction::Instruction;
 use symbol::Symbol;
 
 /// A function within a program.
-pub struct Function<'f, I: 'f + Instruction> {
+pub struct Function<I: Instruction> {
     /// The [symbol] for this function. This provides the name and [`Address`].
     ///
     /// [`Address`]: struct.Symbol.html
@@ -19,7 +19,7 @@ pub struct Function<'f, I: 'f + Instruction> {
     /// The [instructions] that comprise this function.
     ///
     /// [instructions]: trait.Instruction.html
-    pub instructions: &'f [I],
+    pub instructions: Vec<I>,
     /// The [control flow graph] for this function. This is built from the
     /// `instructions`. It is made up of [basic blocks].
     ///
@@ -28,10 +28,10 @@ pub struct Function<'f, I: 'f + Instruction> {
     pub control_flow_graph: ControlFlowGraph,
 }
 
-impl<'f, I: Instruction> Function<'f, I> {
+impl<I: Instruction> Function<I> {
     /// Construct a new function
-    pub fn new(symbol: Symbol, instructions: &'f [I]) -> Self {
-        let cfg = ControlFlowGraph::new(instructions);
+    pub fn new(symbol: Symbol, instructions: Vec<I>) -> Self {
+        let cfg = ControlFlowGraph::new(&instructions);
         Function {
             symbol: symbol,
             instructions: instructions,
@@ -40,8 +40,8 @@ impl<'f, I: Instruction> Function<'f, I> {
     }
 }
 
-impl<'f, I: Instruction> CallGraphAnalysis<I> for Function<'f, I> {
+impl<I: Instruction> CallGraphAnalysis<I> for Function<I> {
     fn identify_call_sites(&self) -> Vec<CallSite> {
-        self.identify_call_sites_in_instructions(self.instructions)
+        self.identify_call_sites_in_instructions(&self.instructions)
     }
 }
