@@ -8,7 +8,9 @@ extern crate rbpf;
 
 use self::rbpf::{disassembler, ebpf};
 use super::address::Address;
+use super::function::Function;
 use super::instruction::Instruction;
+use super::symbol::Symbol;
 
 #[allow(missing_docs)]
 #[derive(Debug)]
@@ -69,9 +71,20 @@ impl Instruction for BpfInstruction {
     }
 }
 
+impl Function<BpfInstruction> {
+    /// Create a function from eBPF bytecode.
+    pub fn from_bpf(symbol: Symbol, data: &[u8]) -> Function<BpfInstruction> {
+        let v = rbpf::disassembler::to_insn_vec(data);
+        let is = v.into_iter()
+            .enumerate()
+            .map(|(idx, insn)| BpfInstruction::new(idx as u64, insn))
+            .collect::<Vec<_>>();
+        Function::new(symbol, is)
+    }
+}
+
 #[cfg(test)]
 mod tests {
-    use super::{rbpf, BpfInstruction};
     use super::super::{Address, Function, Symbol};
 
     #[test]
@@ -88,13 +101,7 @@ mod tests {
             0x95, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  // exit
         ];
 
-        let v = rbpf::disassembler::to_insn_vec(prog);
-        let is = v.into_iter()
-            .enumerate()
-            .map(|(idx, insn)| BpfInstruction::new(idx as u64, insn))
-            .collect::<Vec<_>>();
-
-        let f = Function::new(Symbol::new(Address::new(100000), Some("test")), is);
+        let f = Function::from_bpf(Symbol::new(Address::new(100000), Some("test")), prog);
 
         assert!(f.control_flow_graph.entry_block.is_some());
         assert_eq!(f.control_flow_graph.graph.node_count(), 3);
