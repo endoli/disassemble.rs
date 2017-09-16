@@ -12,7 +12,7 @@ use super::function::Function;
 use super::instruction::Instruction;
 use super::symbol::Symbol;
 
-#[allow(missing_docs)]
+/// A representation of an eBPF instruction.
 #[derive(Debug)]
 pub struct BpfInstruction {
     idx: u64,
@@ -20,7 +20,7 @@ pub struct BpfInstruction {
 }
 
 impl BpfInstruction {
-    #[allow(missing_docs)]
+    /// Wrap an `HLInsn` as a `BPFInstruction`.
     pub fn new(idx: u64, insn: disassembler::HLInsn) -> Self {
         BpfInstruction { idx, insn }
     }

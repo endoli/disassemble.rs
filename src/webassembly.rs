@@ -8,7 +8,7 @@ use parity_wasm::elements::Opcode;
 use super::address::Address;
 use super::instruction::Instruction;
 
-#[allow(missing_docs)]
+/// A representation of a WebAssembly instruction.
 #[derive(Debug)]
 pub struct WasmInstruction {
     idx: u64,
@@ -16,7 +16,7 @@ pub struct WasmInstruction {
 }
 
 impl WasmInstruction {
-    #[allow(missing_docs)]
+    /// Create a `WasmInstruction` from an `Opcode`.
     pub fn new(idx: u64, op: Opcode) -> Self {
         WasmInstruction { idx, op }
     }
