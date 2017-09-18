@@ -32,6 +32,6 @@ fn main() {
 
     let f = Function::from_bpf(Symbol::new(Address::new(100000), Some("test")), prog);
     for i in f.instructions {
-        println!("{:?}", i);
+        println!("{}", i);
     }
 }
