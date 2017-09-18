@@ -9,6 +9,12 @@ use capstone_rust::capstone_sys::{x86_insn, x86_insn_group};
 use super::address::Address;
 use super::instruction::Instruction;
 
+/// A representation of an eBPF instruction.
+#[derive(Debug)]
+pub struct CapstoneInstruction {
+    insn: capstone::Instr,
+}
+
 fn is_group_match<F>(i: &capstone::Instr, predicate: F) -> bool
 where
     F: Fn(&&u32) -> bool,
@@ -30,9 +36,9 @@ where
 }
 
 
-impl Instruction for capstone::Instr {
+impl Instruction for CapstoneInstruction {
     fn address(&self) -> Address {
-        Address::new(self.address)
+        Address::new(self.insn.address)
     }
 
     fn comment(&self) -> Option<String> {
@@ -40,7 +46,7 @@ impl Instruction for capstone::Instr {
     }
 
     fn mnemonic(&self) -> &str {
-        &*self.mnemonic
+        &*self.insn.mnemonic
     }
 
     fn cycle_count(&self) -> Option<u32> {
@@ -48,12 +54,12 @@ impl Instruction for capstone::Instr {
     }
 
     fn is_call(&self) -> bool {
-        is_group_match(self, |&&x| x == x86_insn_group::X86_GRP_CALL.as_int())
+        is_group_match(&self.insn, |&&x| x == x86_insn_group::X86_GRP_CALL.as_int())
     }
 
     fn is_local_conditional_jump(&self) -> bool {
         self.is_local_jump() &&
-            match self.id {
+            match self.insn.id {
                 capstone::InstrIdArch::X86(x86_insn::X86_INS_JMP) |
                 capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOP) |
                 capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOPE) |
@@ -65,8 +71,8 @@ impl Instruction for capstone::Instr {
     }
 
     fn is_local_jump(&self) -> bool {
-        is_group_match(self, |&&x| x == x86_insn_group::X86_GRP_JUMP.as_int()) &&
-            match self.id {
+        is_group_match(&self.insn, |&&x| x == x86_insn_group::X86_GRP_JUMP.as_int()) &&
+            match self.insn.id {
                 capstone::InstrIdArch::X86(x86_insn::X86_INS_LJMP) => false,
                 capstone::InstrIdArch::X86(_) => true,
                 _ => unimplemented!(),
@@ -74,7 +80,7 @@ impl Instruction for capstone::Instr {
     }
 
     fn is_return(&self) -> bool {
-        is_group_match(self, |&&x| x == x86_insn_group::X86_GRP_RET.as_int())
+        is_group_match(&self.insn, |&&x| x == x86_insn_group::X86_GRP_RET.as_int())
     }
 
     fn target_address(&self) -> Option<Address> {

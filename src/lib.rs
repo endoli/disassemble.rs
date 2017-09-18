@@ -106,8 +106,6 @@ extern crate parity_wasm;
 mod address;
 mod basicblock;
 mod callgraphanalysis;
-#[cfg(feature = "capstone")]
-mod capstone;
 mod cfg;
 mod function;
 mod instruction;
@@ -132,6 +130,11 @@ pub use self::symbol::Symbol;
 pub use self::target::Target;
 #[cfg(feature = "webassembly")]
 pub use self::webassembly::WasmInstruction;
+
+#[cfg(feature = "capstone")]
+mod capstone;
+#[cfg(feature = "capstone")]
+pub use self::capstone::CapstoneInstruction;
 
 #[cfg(feature = "bpf")]
 mod bpf;
