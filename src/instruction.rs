@@ -16,7 +16,7 @@ use address::Address;
 /// This is intended to be fairly generic and is how other parts
 /// of this library query information that is specific to a given
 /// platform and body of generated code.
-pub trait Instruction: fmt::Debug {
+pub trait Instruction: fmt::Debug + fmt::Display {
     /// The [`address`] of this `Instruction`.
     ///
     /// The [`address`] of an instruction must be unique within a

@@ -7,6 +7,7 @@
 extern crate rbpf;
 
 use self::rbpf::{disassembler, ebpf};
+use std::fmt;
 use super::address::Address;
 use super::function::Function;
 use super::instruction::Instruction;
@@ -80,6 +81,12 @@ impl Function<BpfInstruction> {
             .map(|(idx, insn)| BpfInstruction::new(idx as u64, insn))
             .collect::<Vec<_>>();
         Function::new(symbol, is)
+    }
+}
+
+impl fmt::Display for BpfInstruction {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.insn.desc.fmt(f)
     }
 }
 

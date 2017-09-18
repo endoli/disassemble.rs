@@ -6,6 +6,7 @@
 
 use capstone_rust::capstone;
 use capstone_rust::capstone_sys::{x86_insn, x86_insn_group};
+use std::fmt;
 use super::address::Address;
 use super::instruction::Instruction;
 
@@ -85,5 +86,11 @@ impl Instruction for CapstoneInstruction {
 
     fn target_address(&self) -> Option<Address> {
         None
+    }
+}
+
+impl fmt::Display for CapstoneInstruction {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{} {}", self.insn.mnemonic, self.insn.op_str)
     }
 }

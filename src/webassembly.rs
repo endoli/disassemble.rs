@@ -5,6 +5,7 @@
 // except according to those terms.
 
 use parity_wasm::elements::Opcode;
+use std::fmt;
 use super::address::Address;
 use super::instruction::Instruction;
 
@@ -248,5 +249,11 @@ impl Instruction for WasmInstruction {
             Opcode::Call(a) => Some(Address::new(u64::from(a))),
             _ => None,
         }
+    }
+}
+
+impl fmt::Display for WasmInstruction {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.op.fmt(f)
     }
 }

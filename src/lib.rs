@@ -168,6 +168,12 @@ mod tests {
         opcode: Opcode,
     }
 
+    impl ::std::fmt::Display for TestInstruction {
+        fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+            write!(f, "{:?}", self.opcode)
+        }
+    }
+
     impl TestInstruction {
         /// Construct a `TestInstruction`.
         pub fn new(address: u64, opcode: Opcode) -> Self {
