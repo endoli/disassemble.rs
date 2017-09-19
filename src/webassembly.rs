@@ -4,10 +4,13 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use parity_wasm::elements::Opcode;
+use parity_wasm::elements::{deserialize_file, Opcode};
 use std::fmt;
 use super::address::Address;
+use super::function::Function;
 use super::instruction::Instruction;
+use super::module::Module;
+use super::symbol::Symbol;
 
 /// A representation of a WebAssembly instruction.
 #[derive(Debug)]
@@ -248,6 +251,42 @@ impl Instruction for WasmInstruction {
         match self.op {
             Opcode::Call(a) => Some(Address::new(u64::from(a))),
             _ => None,
+        }
+    }
+}
+
+impl Function<WasmInstruction> {
+    /// Create a function from WebAssembly bytecode.
+    pub fn from_wasm(symbol: Symbol, ops: &[Opcode]) -> Function<WasmInstruction> {
+        let is = ops.into_iter()
+            .enumerate()
+            .map(|(idx, insn)| WasmInstruction::new(idx as u64, insn.clone()))
+            .collect::<Vec<_>>();
+        Function::new(symbol, is)
+    }
+}
+
+impl Module<WasmInstruction> {
+    /// Load a module from a binary WebAssembly file.
+    pub fn from_wasm_file(path: &str) -> Option<Self> {
+        if let Ok(m) = deserialize_file(path) {
+            if let Some(code) = m.code_section() {
+                let functions = code.bodies()
+                    .iter()
+                    .enumerate()
+                    .map(|(idx, body)| {
+                        Function::from_wasm(
+                            Symbol::new(Address::new(idx as u64), None),
+                            body.code().elements(),
+                        )
+                    })
+                    .collect();
+                Some(Module { functions })
+            } else {
+                None
+            }
+        } else {
+            None
         }
     }
 }
