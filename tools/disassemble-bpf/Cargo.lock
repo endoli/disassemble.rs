@@ -1,0 +1,37 @@
+[root]
+name = "disassemble-bpf"
+version = "0.1.0"
+dependencies = [
+ "disassemble 0.0.1",
+]
+
+[[package]]
+name = "disassemble"
+version = "0.0.1"
+dependencies = [
+ "petgraph 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "fixedbitset"
+version = "0.1.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "ordermap"
+version = "0.2.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "petgraph"
+version = "0.4.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "fixedbitset 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)",
+ "ordermap 0.2.12 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[metadata]
+"checksum fixedbitset 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)" = "85cb8fec437468d86dc7c83ca7cfc933341d561873275f22dd5eedefa63a6478"
+"checksum ordermap 0.2.12 (registry+https://github.com/rust-lang/crates.io-index)" = "bb4b46e558656ea66647985c3de0a8ad0cb5f01cba8a4eaff39ae27de3aeda57"
+"checksum petgraph 0.4.6 (registry+https://github.com/rust-lang/crates.io-index)" = "a1bfbdb5688766a150192ccc20fa5b834e1a95eea8de84cf1aa45233df919ea7"
