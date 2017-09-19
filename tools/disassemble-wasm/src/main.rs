@@ -13,12 +13,27 @@
         unsafe_code, unstable_features,
         unused_import_braces, unused_qualifications)]
 
+extern crate clap;
 extern crate disassemble;
 
 use disassemble::Module;
 
 fn main() {
-    if let Some(m) = Module::from_wasm_file("test.wasm") {
+    let matches = clap::App::new("disassemble-wasm")
+        .version("0.0.1")
+        .author("Bruce Mitchener, Jr.")
+        .about("Disassemble binary WebAssembly files")
+        .arg(
+            clap::Arg::with_name("FILE")
+                .help("The binary WebAssembly file to use.")
+                .required(true)
+                .index(1),
+        )
+        .get_matches();
+
+    let file = matches.value_of("FILE").unwrap();
+
+    if let Some(m) = Module::from_wasm_file(file) {
         for f in m.functions {
             for i in f.instructions {
                 println!("{}", i);

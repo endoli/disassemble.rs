@@ -11,3 +11,4 @@ repository = "https://github.com/endoli/disassemble.rs"
 
 [dependencies]
 disassemble = { path = "../..", version = "0.0.1", features = ["webassembly"] }
+clap = "2"
