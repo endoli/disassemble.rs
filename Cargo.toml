@@ -23,4 +23,4 @@ parity-wasm = { version = "0.14", optional = true }
 rbpf = { git = "https://github.com/qmonnet/rbpf", optional = true }
 
 [workspace]
-members = ["tools/disassemble-bpf"]
+members = ["tools/disassemble-bpf", "tools/disassemble-wasm"]

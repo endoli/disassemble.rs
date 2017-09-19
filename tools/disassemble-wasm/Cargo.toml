@@ -1,0 +1,13 @@
+[package]
+name = "disassemble-wasm"
+version = "0.0.1"
+authors = ["Bruce Mitchener <bruce.mitchener@gmail.com>"]
+license = "MIT/Apache-2.0"
+readme = "README.md"
+description = "Tool for disassembling and inspecting WebAssembly bytecode."
+keywords = ["disassemble", "WebAssembly", "wasm", "decompile"]
+homepage = "https://github.com/endoli/disassemble.rs"
+repository = "https://github.com/endoli/disassemble.rs"
+
+[dependencies]
+disassemble = { path = "../..", version = "0.0.1", features = ["webassembly"] }
