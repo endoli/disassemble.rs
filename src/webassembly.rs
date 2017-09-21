@@ -4,7 +4,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use parity_wasm::elements::{deserialize_file, Opcode, Opcodes};
+use parity_wasm::elements::{deserialize_file, External, Internal, Opcode, Opcodes};
+use std::collections::HashMap;
 use std::fmt;
 use std::path::Path;
 use super::address::Address;
@@ -272,15 +273,29 @@ impl Module<WasmInstruction> {
     /// Load a module from a binary WebAssembly file.
     pub fn from_wasm_file<P: AsRef<Path>>(path: P) -> Option<Self> {
         if let Ok(m) = deserialize_file(path) {
+            let mut symbol_table = HashMap::<Address, &str>::new();
+            if let Some(exports) = m.export_section() {
+                for export in exports.entries() {
+                    if let &Internal::Function(index) = export.internal() {
+                        symbol_table.insert(Address::new(index as u64), export.field());
+                    }
+                }
+            }
+            if let Some(imports) = m.import_section() {
+                for import in imports.entries() {
+                    if let &External::Function(index) = import.external() {
+                        symbol_table.insert(Address::new(index as u64), import.field());
+                    }
+                }
+            }
             if let Some(code) = m.code_section() {
                 let functions = code.bodies()
                     .iter()
                     .enumerate()
                     .map(|(idx, body)| {
-                        Function::from_wasm(
-                            Symbol::new(Address::new(idx as u64), None),
-                            body.code(),
-                        )
+                        let addr = Address::new(idx as u64);
+                        let name = symbol_table.get(&addr).map(|n| *n);
+                        Function::from_wasm(Symbol::new(addr, name), body.code())
                     })
                     .collect();
                 Some(Module { functions })
