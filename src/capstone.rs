@@ -103,10 +103,10 @@ mod tests {
 
     #[test]
     fn test() {
-        let code = vec![0x55, 0x48, 0x8b, 0x05, 0xb8, 0x13, 0x00, 0x00];
+        let code = &[0x55, 0x48, 0x8b, 0x05, 0xb8, 0x13, 0x00, 0x00];
 
         let dec = cs::Capstone::new(cs::cs_arch::CS_ARCH_X86, cs::cs_mode::CS_MODE_32).unwrap();
-        let buf = dec.disasm(code.as_slice(), 0, 0).unwrap();
+        let buf = dec.disasm(code, 0, 0).unwrap();
         let is = buf.iter()
             .map(|insn| CapstoneInstruction { insn })
             .collect::<Vec<_>>();
