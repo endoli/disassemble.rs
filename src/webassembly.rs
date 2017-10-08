@@ -236,10 +236,11 @@ impl Instruction for WasmInstruction {
     }
 
     fn is_local_jump(&self) -> bool {
-        match self.op {
-            Opcode::Br(..) => true,
-            _ => false,
-        }
+        self.is_local_conditional_jump() ||
+            match self.op {
+                Opcode::Br(..) => true,
+                _ => false,
+            }
     }
 
     fn is_return(&self) -> bool {
