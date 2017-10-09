@@ -141,6 +141,11 @@ mod bpf;
 #[cfg(feature = "bpf")]
 pub use self::bpf::BpfInstruction;
 
+#[cfg(feature = "burst")]
+mod burst;
+#[cfg(feature = "burst")]
+pub use self::burst::BurstInstruction;
+
 #[cfg(test)]
 mod tests {
     //! Test Instructions
