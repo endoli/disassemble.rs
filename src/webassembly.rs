@@ -4,7 +4,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use parity_wasm::elements::{deserialize_file, External, Internal, Opcode, Opcodes};
+extern crate parity_wasm;
+
+use self::parity_wasm::elements::{deserialize_file, External, Internal, Opcode, Opcodes};
 use std::collections::HashMap;
 use std::fmt;
 use std::path::Path;

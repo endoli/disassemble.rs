@@ -4,8 +4,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use capstone_rust::capstone;
-use capstone_rust::capstone_sys::{x86_insn, x86_insn_group};
+extern crate capstone_rust;
+
+use self::capstone_rust::capstone;
+use self::capstone_rust::capstone_sys::{x86_insn, x86_insn_group};
 use std::fmt;
 use super::address::Address;
 use super::instruction::Instruction;

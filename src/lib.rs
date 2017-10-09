@@ -97,12 +97,6 @@
 
 extern crate petgraph;
 
-#[cfg(feature = "capstone")]
-extern crate capstone_rust;
-
-#[cfg(feature = "webassembly")]
-extern crate parity_wasm;
-
 mod address;
 mod basicblock;
 mod callgraphanalysis;
