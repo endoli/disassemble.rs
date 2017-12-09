@@ -20,7 +20,7 @@ all = ["bpf", "capstone", "webassembly", "burst"]
 petgraph = "0.4.4"
 burst = { version = "0.0.2", optional = true }
 capstone_rust = { version = "0.2", optional = true }
-parity-wasm = { version = "0.14", optional = true }
+parity-wasm = { version = "0.17", optional = true }
 rbpf = { git = "https://github.com/qmonnet/rbpf", optional = true }
 
 [workspace]
