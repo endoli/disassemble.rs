@@ -100,18 +100,14 @@ impl fmt::Display for BurstInstruction {
 mod tests {
     use super::burst;
     use super::BurstInstruction;
-    use super::super::{Address, Function, Symbol};
 
     #[test]
     fn test() {
         let code = &[0x55, 0x48, 0x8b, 0x05, 0xb8, 0x13, 0x00, 0x00];
 
-        let buf = burst::x86::disassemble_64(code, 0, 0);
-        let is = buf.iter()
-            .map(|insn| BurstInstruction { insn })
-            .collect::<Vec<_>>();
-        let f = Function::new(Symbol::new(Address::new(100000), Some("test")), is);
-
-        assert!(f.control_flow_graph.entry_block.is_some());
+        if let Ok(insn) = burst::x86::disassemble_64(code, 0, code.len()) {
+            let bi = BurstInstruction { insn };
+            assert_eq!("push rbp", format!("{}", bi));
+        }
     }
 }
