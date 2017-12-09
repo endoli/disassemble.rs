@@ -99,7 +99,7 @@ impl fmt::Display for CapstoneInstruction {
 
 #[cfg(test)]
 mod tests {
-    use capstone_rust::capstone as cs;
+    use capstone::capstone_rust::capstone as cs;
     use super::CapstoneInstruction;
     use super::super::{Address, Function, Symbol};
 
