@@ -6,13 +6,13 @@
 
 extern crate parity_wasm;
 
-use self::parity_wasm::elements::{deserialize_file, External, Internal, Opcode, Opcodes};
+use self::parity_wasm::elements::{deserialize_file, External, Internal, Instructions, Instruction};
 use std::collections::HashMap;
 use std::fmt;
 use std::path::Path;
 use super::address::Address;
 use super::function::Function;
-use super::instruction::Instruction;
+use super::instruction;
 use super::module::Module;
 use super::symbol::Symbol;
 
@@ -20,17 +20,17 @@ use super::symbol::Symbol;
 #[derive(Debug)]
 pub struct WasmInstruction {
     idx: u64,
-    op: Opcode,
+    insn: Instruction,
 }
 
 impl WasmInstruction {
-    /// Create a `WasmInstruction` from an `Opcode`.
-    pub fn new(idx: u64, op: Opcode) -> Self {
-        WasmInstruction { idx, op }
+    /// Create a `WasmInstruction` from an opcode.
+    pub fn new(idx: u64, insn: Instruction) -> Self {
+        WasmInstruction { idx, insn }
     }
 }
 
-impl Instruction for WasmInstruction {
+impl instruction::Instruction for WasmInstruction {
     fn address(&self) -> Address {
         Address::new(self.idx)
     }
@@ -40,179 +40,179 @@ impl Instruction for WasmInstruction {
     }
 
     fn mnemonic(&self) -> &str {
-        match self.op {
-            Opcode::Unreachable => "unreachable",
-            Opcode::Nop => "nop",
-            Opcode::Block(..) => "block",
-            Opcode::Loop(..) => "loop",
-            Opcode::If(..) => "if",
-            Opcode::Else => "else",
-            Opcode::End => "end",
-            Opcode::Br(..) => "br",
-            Opcode::BrIf(..) => "br_if",
-            Opcode::BrTable(..) => "br_table",
-            Opcode::Return => "return",
-            Opcode::Call(..) => "call",
-            Opcode::CallIndirect(..) => "call_indirect",
-            Opcode::Drop => "drop",
-            Opcode::Select => "select",
-            Opcode::GetLocal(..) => "get_local",
-            Opcode::SetLocal(..) => "set_local",
-            Opcode::TeeLocal(..) => "tee_local",
-            Opcode::GetGlobal(..) => "get_global",
-            Opcode::SetGlobal(..) => "set_global",
-            Opcode::I32Load(..) => "i32.load",
-            Opcode::I64Load(..) => "i64.load",
-            Opcode::F32Load(..) => "f32.load",
-            Opcode::F64Load(..) => "f64.load",
-            Opcode::I32Load8S(..) => "i32.load8_s",
-            Opcode::I32Load8U(..) => "i32.load8_u",
-            Opcode::I32Load16S(..) => "i32.load16_s",
-            Opcode::I32Load16U(..) => "i32.load16_u",
-            Opcode::I64Load8S(..) => "i64.load8_s",
-            Opcode::I64Load8U(..) => "i64.load8_u",
-            Opcode::I64Load16S(..) => "i64.load16_s",
-            Opcode::I64Load16U(..) => "i64.load16_u",
-            Opcode::I64Load32S(..) => "i64.load32_s",
-            Opcode::I64Load32U(..) => "i64.load32_u",
-            Opcode::I32Store(..) => "i32.store",
-            Opcode::I64Store(..) => "i64.store",
-            Opcode::F32Store(..) => "f32.store",
-            Opcode::F64Store(..) => "f64.store",
-            Opcode::I32Store8(..) => "i32.store8",
-            Opcode::I32Store16(..) => "i32.store16",
-            Opcode::I64Store8(..) => "i64.store8",
-            Opcode::I64Store16(..) => "i64.store16",
-            Opcode::I64Store32(..) => "i64.store32",
-            Opcode::CurrentMemory(..) => "current_memory",
-            Opcode::GrowMemory(..) => "grow_memory",
-            Opcode::I32Const(..) => "i32.const",
-            Opcode::I64Const(..) => "i64.const",
-            Opcode::F32Const(..) => "f32.const",
-            Opcode::F64Const(..) => "f64.const",
-            Opcode::I32Eq => "i32.eq",
-            Opcode::I32Eqz => "i32.eqz",
-            Opcode::I32Ne => "i32.ne",
-            Opcode::I32LtS => "i32.lt_s",
-            Opcode::I32LtU => "i32.lt_u",
-            Opcode::I32GtS => "i32.gt_s",
-            Opcode::I32GtU => "i32.gt_u",
-            Opcode::I32LeS => "i32.le_s",
-            Opcode::I32LeU => "i32.le_u",
-            Opcode::I32GeS => "i32.ge_s",
-            Opcode::I32GeU => "i32.ge_u",
-            Opcode::I64Eq => "i64.eq",
-            Opcode::I64Eqz => "i64.eqz",
-            Opcode::I64Ne => "i64.ne",
-            Opcode::I64LtS => "i64.lt_s",
-            Opcode::I64LtU => "i64.lt_u",
-            Opcode::I64GtS => "i64.gt_s",
-            Opcode::I64GtU => "i64.gt_u",
-            Opcode::I64LeS => "i64.le_s",
-            Opcode::I64LeU => "i64.le_u",
-            Opcode::I64GeS => "i64.ge_s",
-            Opcode::I64GeU => "i64.ge_u",
-            Opcode::F32Eq => "f32.eq",
-            Opcode::F32Ne => "f32.ne",
-            Opcode::F32Lt => "f32.lt",
-            Opcode::F32Gt => "f32.gt",
-            Opcode::F32Le => "f32.le",
-            Opcode::F32Ge => "f32.ge",
-            Opcode::F64Eq => "f64.eq",
-            Opcode::F64Ne => "f64.ne",
-            Opcode::F64Lt => "f64.lt",
-            Opcode::F64Gt => "f64.gt",
-            Opcode::F64Le => "f64.le",
-            Opcode::F64Ge => "f64.ge",
-            Opcode::I32Clz => "i32.clz",
-            Opcode::I32Ctz => "i32.ctz",
-            Opcode::I32Popcnt => "i32.popcnt",
-            Opcode::I32Add => "i32.add",
-            Opcode::I32Sub => "i32.sub",
-            Opcode::I32Mul => "i32.mul",
-            Opcode::I32DivS => "i32.div_s",
-            Opcode::I32DivU => "i32.div_u",
-            Opcode::I32RemS => "i32.rem_s",
-            Opcode::I32RemU => "i32.rem_u",
-            Opcode::I32And => "i32.and",
-            Opcode::I32Or => "i32.or",
-            Opcode::I32Xor => "i32.xor",
-            Opcode::I32Shl => "i32.shl",
-            Opcode::I32ShrS => "i32.shr_s",
-            Opcode::I32ShrU => "i32.shr_u",
-            Opcode::I32Rotl => "i32.rotl",
-            Opcode::I32Rotr => "i32.rotr",
-            Opcode::I64Clz => "i64.clz",
-            Opcode::I64Ctz => "i64.ctz",
-            Opcode::I64Popcnt => "i64.popcnt",
-            Opcode::I64Add => "i64.add",
-            Opcode::I64Sub => "i64.sub",
-            Opcode::I64Mul => "i64.mul",
-            Opcode::I64DivS => "i64.div_s",
-            Opcode::I64DivU => "i64.div_u",
-            Opcode::I64RemS => "i64.rem_s",
-            Opcode::I64RemU => "i64.rem_u",
-            Opcode::I64And => "i64.and",
-            Opcode::I64Or => "i64.or",
-            Opcode::I64Xor => "i64.xor",
-            Opcode::I64Shl => "i64.shl",
-            Opcode::I64ShrS => "i64.shr_s",
-            Opcode::I64ShrU => "i64.shr_u",
-            Opcode::I64Rotl => "i64.rotl",
-            Opcode::I64Rotr => "i64.rotr",
-            Opcode::F32Abs => "f32.abs",
-            Opcode::F32Neg => "f32.neg",
-            Opcode::F32Ceil => "f32.ceil",
-            Opcode::F32Floor => "f32.floor",
-            Opcode::F32Trunc => "f32.trunc",
-            Opcode::F32Nearest => "f32.nearest",
-            Opcode::F32Sqrt => "f32.sqrt",
-            Opcode::F32Add => "f32.add",
-            Opcode::F32Sub => "f32.sub",
-            Opcode::F32Mul => "f32.mul",
-            Opcode::F32Div => "f32.div",
-            Opcode::F32Min => "f32.min",
-            Opcode::F32Max => "f32.max",
-            Opcode::F32Copysign => "f32.copysign",
-            Opcode::F64Abs => "f64.abs",
-            Opcode::F64Neg => "f64.neg",
-            Opcode::F64Ceil => "f64.ceil",
-            Opcode::F64Floor => "f64.floor",
-            Opcode::F64Trunc => "f64.trunc",
-            Opcode::F64Nearest => "f64.nearest",
-            Opcode::F64Sqrt => "f64.sqrt",
-            Opcode::F64Add => "f64.add",
-            Opcode::F64Sub => "f64.sub",
-            Opcode::F64Mul => "f64.mul",
-            Opcode::F64Div => "f64.div",
-            Opcode::F64Min => "f64.min",
-            Opcode::F64Max => "f64.max",
-            Opcode::F64Copysign => "f64.copysign",
-            Opcode::I32WarpI64 => "i32.wrap/i64",
-            Opcode::I32TruncSF32 => "i32.trunc_s/f32",
-            Opcode::I32TruncUF32 => "i32.trunc_u/f32",
-            Opcode::I32TruncSF64 => "i32.trunc_s/f64",
-            Opcode::I32TruncUF64 => "i32.trunc_u/f64",
-            Opcode::I64ExtendSI32 => "i64.extend_s/i32",
-            Opcode::I64ExtendUI32 => "i64.extend_u/i32",
-            Opcode::I64TruncSF32 => "i64.trunc_s/f32",
-            Opcode::I64TruncUF32 => "i64.trunc_u/f32",
-            Opcode::I64TruncSF64 => "i64.trunc_s/f64",
-            Opcode::I64TruncUF64 => "i64.trunc_u/f64",
-            Opcode::F32ConvertSI32 => "f32.convert_s/i32",
-            Opcode::F32ConvertUI32 => "f32.convert_u/i32",
-            Opcode::F32ConvertSI64 => "f32.convert_s/i64",
-            Opcode::F32ConvertUI64 => "f32.convert_u/i64",
-            Opcode::F32DemoteF64 => "f32.demote/f64",
-            Opcode::F64ConvertSI32 => "f64.convert_s/i32",
-            Opcode::F64ConvertUI32 => "f64.convert_u/i32",
-            Opcode::F64ConvertSI64 => "f64.convert_s/i64",
-            Opcode::F64ConvertUI64 => "f64.convert_u/i64",
-            Opcode::F64PromoteF32 => "f64.promote/f32",
-            Opcode::I32ReinterpretF32 => "i32.reinterpret/f32",
-            Opcode::I64ReinterpretF64 => "i64.reinterpret/f64",
-            Opcode::F32ReinterpretI32 => "f32.reinterpret/i32",
-            Opcode::F64ReinterpretI64 => "f64.reinterpret/i64",
+        match self.insn {
+            Instruction::Unreachable => "unreachable",
+            Instruction::Nop => "nop",
+            Instruction::Block(..) => "block",
+            Instruction::Loop(..) => "loop",
+            Instruction::If(..) => "if",
+            Instruction::Else => "else",
+            Instruction::End => "end",
+            Instruction::Br(..) => "br",
+            Instruction::BrIf(..) => "br_if",
+            Instruction::BrTable(..) => "br_table",
+            Instruction::Return => "return",
+            Instruction::Call(..) => "call",
+            Instruction::CallIndirect(..) => "call_indirect",
+            Instruction::Drop => "drop",
+            Instruction::Select => "select",
+            Instruction::GetLocal(..) => "get_local",
+            Instruction::SetLocal(..) => "set_local",
+            Instruction::TeeLocal(..) => "tee_local",
+            Instruction::GetGlobal(..) => "get_global",
+            Instruction::SetGlobal(..) => "set_global",
+            Instruction::I32Load(..) => "i32.load",
+            Instruction::I64Load(..) => "i64.load",
+            Instruction::F32Load(..) => "f32.load",
+            Instruction::F64Load(..) => "f64.load",
+            Instruction::I32Load8S(..) => "i32.load8_s",
+            Instruction::I32Load8U(..) => "i32.load8_u",
+            Instruction::I32Load16S(..) => "i32.load16_s",
+            Instruction::I32Load16U(..) => "i32.load16_u",
+            Instruction::I64Load8S(..) => "i64.load8_s",
+            Instruction::I64Load8U(..) => "i64.load8_u",
+            Instruction::I64Load16S(..) => "i64.load16_s",
+            Instruction::I64Load16U(..) => "i64.load16_u",
+            Instruction::I64Load32S(..) => "i64.load32_s",
+            Instruction::I64Load32U(..) => "i64.load32_u",
+            Instruction::I32Store(..) => "i32.store",
+            Instruction::I64Store(..) => "i64.store",
+            Instruction::F32Store(..) => "f32.store",
+            Instruction::F64Store(..) => "f64.store",
+            Instruction::I32Store8(..) => "i32.store8",
+            Instruction::I32Store16(..) => "i32.store16",
+            Instruction::I64Store8(..) => "i64.store8",
+            Instruction::I64Store16(..) => "i64.store16",
+            Instruction::I64Store32(..) => "i64.store32",
+            Instruction::CurrentMemory(..) => "current_memory",
+            Instruction::GrowMemory(..) => "grow_memory",
+            Instruction::I32Const(..) => "i32.const",
+            Instruction::I64Const(..) => "i64.const",
+            Instruction::F32Const(..) => "f32.const",
+            Instruction::F64Const(..) => "f64.const",
+            Instruction::I32Eq => "i32.eq",
+            Instruction::I32Eqz => "i32.eqz",
+            Instruction::I32Ne => "i32.ne",
+            Instruction::I32LtS => "i32.lt_s",
+            Instruction::I32LtU => "i32.lt_u",
+            Instruction::I32GtS => "i32.gt_s",
+            Instruction::I32GtU => "i32.gt_u",
+            Instruction::I32LeS => "i32.le_s",
+            Instruction::I32LeU => "i32.le_u",
+            Instruction::I32GeS => "i32.ge_s",
+            Instruction::I32GeU => "i32.ge_u",
+            Instruction::I64Eq => "i64.eq",
+            Instruction::I64Eqz => "i64.eqz",
+            Instruction::I64Ne => "i64.ne",
+            Instruction::I64LtS => "i64.lt_s",
+            Instruction::I64LtU => "i64.lt_u",
+            Instruction::I64GtS => "i64.gt_s",
+            Instruction::I64GtU => "i64.gt_u",
+            Instruction::I64LeS => "i64.le_s",
+            Instruction::I64LeU => "i64.le_u",
+            Instruction::I64GeS => "i64.ge_s",
+            Instruction::I64GeU => "i64.ge_u",
+            Instruction::F32Eq => "f32.eq",
+            Instruction::F32Ne => "f32.ne",
+            Instruction::F32Lt => "f32.lt",
+            Instruction::F32Gt => "f32.gt",
+            Instruction::F32Le => "f32.le",
+            Instruction::F32Ge => "f32.ge",
+            Instruction::F64Eq => "f64.eq",
+            Instruction::F64Ne => "f64.ne",
+            Instruction::F64Lt => "f64.lt",
+            Instruction::F64Gt => "f64.gt",
+            Instruction::F64Le => "f64.le",
+            Instruction::F64Ge => "f64.ge",
+            Instruction::I32Clz => "i32.clz",
+            Instruction::I32Ctz => "i32.ctz",
+            Instruction::I32Popcnt => "i32.popcnt",
+            Instruction::I32Add => "i32.add",
+            Instruction::I32Sub => "i32.sub",
+            Instruction::I32Mul => "i32.mul",
+            Instruction::I32DivS => "i32.div_s",
+            Instruction::I32DivU => "i32.div_u",
+            Instruction::I32RemS => "i32.rem_s",
+            Instruction::I32RemU => "i32.rem_u",
+            Instruction::I32And => "i32.and",
+            Instruction::I32Or => "i32.or",
+            Instruction::I32Xor => "i32.xor",
+            Instruction::I32Shl => "i32.shl",
+            Instruction::I32ShrS => "i32.shr_s",
+            Instruction::I32ShrU => "i32.shr_u",
+            Instruction::I32Rotl => "i32.rotl",
+            Instruction::I32Rotr => "i32.rotr",
+            Instruction::I64Clz => "i64.clz",
+            Instruction::I64Ctz => "i64.ctz",
+            Instruction::I64Popcnt => "i64.popcnt",
+            Instruction::I64Add => "i64.add",
+            Instruction::I64Sub => "i64.sub",
+            Instruction::I64Mul => "i64.mul",
+            Instruction::I64DivS => "i64.div_s",
+            Instruction::I64DivU => "i64.div_u",
+            Instruction::I64RemS => "i64.rem_s",
+            Instruction::I64RemU => "i64.rem_u",
+            Instruction::I64And => "i64.and",
+            Instruction::I64Or => "i64.or",
+            Instruction::I64Xor => "i64.xor",
+            Instruction::I64Shl => "i64.shl",
+            Instruction::I64ShrS => "i64.shr_s",
+            Instruction::I64ShrU => "i64.shr_u",
+            Instruction::I64Rotl => "i64.rotl",
+            Instruction::I64Rotr => "i64.rotr",
+            Instruction::F32Abs => "f32.abs",
+            Instruction::F32Neg => "f32.neg",
+            Instruction::F32Ceil => "f32.ceil",
+            Instruction::F32Floor => "f32.floor",
+            Instruction::F32Trunc => "f32.trunc",
+            Instruction::F32Nearest => "f32.nearest",
+            Instruction::F32Sqrt => "f32.sqrt",
+            Instruction::F32Add => "f32.add",
+            Instruction::F32Sub => "f32.sub",
+            Instruction::F32Mul => "f32.mul",
+            Instruction::F32Div => "f32.div",
+            Instruction::F32Min => "f32.min",
+            Instruction::F32Max => "f32.max",
+            Instruction::F32Copysign => "f32.copysign",
+            Instruction::F64Abs => "f64.abs",
+            Instruction::F64Neg => "f64.neg",
+            Instruction::F64Ceil => "f64.ceil",
+            Instruction::F64Floor => "f64.floor",
+            Instruction::F64Trunc => "f64.trunc",
+            Instruction::F64Nearest => "f64.nearest",
+            Instruction::F64Sqrt => "f64.sqrt",
+            Instruction::F64Add => "f64.add",
+            Instruction::F64Sub => "f64.sub",
+            Instruction::F64Mul => "f64.mul",
+            Instruction::F64Div => "f64.div",
+            Instruction::F64Min => "f64.min",
+            Instruction::F64Max => "f64.max",
+            Instruction::F64Copysign => "f64.copysign",
+            Instruction::I32WrapI64 => "i32.wrap/i64",
+            Instruction::I32TruncSF32 => "i32.trunc_s/f32",
+            Instruction::I32TruncUF32 => "i32.trunc_u/f32",
+            Instruction::I32TruncSF64 => "i32.trunc_s/f64",
+            Instruction::I32TruncUF64 => "i32.trunc_u/f64",
+            Instruction::I64ExtendSI32 => "i64.extend_s/i32",
+            Instruction::I64ExtendUI32 => "i64.extend_u/i32",
+            Instruction::I64TruncSF32 => "i64.trunc_s/f32",
+            Instruction::I64TruncUF32 => "i64.trunc_u/f32",
+            Instruction::I64TruncSF64 => "i64.trunc_s/f64",
+            Instruction::I64TruncUF64 => "i64.trunc_u/f64",
+            Instruction::F32ConvertSI32 => "f32.convert_s/i32",
+            Instruction::F32ConvertUI32 => "f32.convert_u/i32",
+            Instruction::F32ConvertSI64 => "f32.convert_s/i64",
+            Instruction::F32ConvertUI64 => "f32.convert_u/i64",
+            Instruction::F32DemoteF64 => "f32.demote/f64",
+            Instruction::F64ConvertSI32 => "f64.convert_s/i32",
+            Instruction::F64ConvertUI32 => "f64.convert_u/i32",
+            Instruction::F64ConvertSI64 => "f64.convert_s/i64",
+            Instruction::F64ConvertUI64 => "f64.convert_u/i64",
+            Instruction::F64PromoteF32 => "f64.promote/f32",
+            Instruction::I32ReinterpretF32 => "i32.reinterpret/f32",
+            Instruction::I64ReinterpretF64 => "i64.reinterpret/f64",
+            Instruction::F32ReinterpretI32 => "f32.reinterpret/i32",
+            Instruction::F64ReinterpretI64 => "f64.reinterpret/i64",
         }
     }
 
@@ -221,40 +221,40 @@ impl Instruction for WasmInstruction {
     }
 
     fn is_call(&self) -> bool {
-        match self.op {
-            Opcode::Call(..) |
-            Opcode::CallIndirect(..) => true,
+        match self.insn {
+            Instruction::Call(..) |
+            Instruction::CallIndirect(..) => true,
             _ => false,
         }
     }
 
     fn is_local_conditional_jump(&self) -> bool {
-        match self.op {
-            Opcode::If(..) |
-            Opcode::BrIf(..) |
-            Opcode::BrTable(..) => true,
+        match self.insn {
+            Instruction::If(..) |
+            Instruction::BrIf(..) |
+            Instruction::BrTable(..) => true,
             _ => false,
         }
     }
 
     fn is_local_jump(&self) -> bool {
         self.is_local_conditional_jump() ||
-            match self.op {
-                Opcode::Br(..) => true,
+            match self.insn {
+                Instruction::Br(..) => true,
                 _ => false,
             }
     }
 
     fn is_return(&self) -> bool {
-        match self.op {
-            Opcode::Return => true,
+        match self.insn {
+            Instruction::Return => true,
             _ => false,
         }
     }
 
     fn target_address(&self) -> Option<Address> {
-        match self.op {
-            Opcode::Call(a) => Some(Address::new(u64::from(a))),
+        match self.insn {
+            Instruction::Call(a) => Some(Address::new(u64::from(a))),
             _ => None,
         }
     }
@@ -262,8 +262,8 @@ impl Instruction for WasmInstruction {
 
 impl Function<WasmInstruction> {
     /// Create a function from WebAssembly bytecode.
-    pub fn from_wasm(symbol: Symbol, ops: &Opcodes) -> Function<WasmInstruction> {
-        let is = ops.elements()
+    pub fn from_wasm(symbol: Symbol, instructions: &Instructions) -> Function<WasmInstruction> {
+        let is = instructions.elements()
             .into_iter()
             .enumerate()
             .map(|(idx, insn)| WasmInstruction::new(idx as u64, insn.clone()))
@@ -313,6 +313,6 @@ impl Module<WasmInstruction> {
 
 impl fmt::Display for WasmInstruction {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.op.fmt(f)
+        self.insn.fmt(f)
     }
 }
