@@ -6,15 +6,17 @@
 
 extern crate parity_wasm;
 
-use self::parity_wasm::elements::{deserialize_file, External, Internal, Instructions, Instruction};
-use std::collections::HashMap;
-use std::fmt;
-use std::path::Path;
+use self::parity_wasm::elements::{
+    deserialize_file, External, Instruction, Instructions, Internal,
+};
 use super::address::Address;
 use super::function::Function;
 use super::instruction;
 use super::module::Module;
 use super::symbol::Symbol;
+use std::collections::HashMap;
+use std::fmt;
+use std::path::Path;
 
 /// A representation of a WebAssembly instruction.
 #[derive(Debug)]
@@ -222,27 +224,23 @@ impl instruction::Instruction for WasmInstruction {
 
     fn is_call(&self) -> bool {
         match self.insn {
-            Instruction::Call(..) |
-            Instruction::CallIndirect(..) => true,
+            Instruction::Call(..) | Instruction::CallIndirect(..) => true,
             _ => false,
         }
     }
 
     fn is_local_conditional_jump(&self) -> bool {
         match self.insn {
-            Instruction::If(..) |
-            Instruction::BrIf(..) |
-            Instruction::BrTable(..) => true,
+            Instruction::If(..) | Instruction::BrIf(..) | Instruction::BrTable(..) => true,
             _ => false,
         }
     }
 
     fn is_local_jump(&self) -> bool {
-        self.is_local_conditional_jump() ||
-            match self.insn {
-                Instruction::Br(..) => true,
-                _ => false,
-            }
+        self.is_local_conditional_jump() || match self.insn {
+            Instruction::Br(..) => true,
+            _ => false,
+        }
     }
 
     fn is_return(&self) -> bool {
@@ -263,7 +261,8 @@ impl instruction::Instruction for WasmInstruction {
 impl Function<WasmInstruction> {
     /// Create a function from WebAssembly bytecode.
     pub fn from_wasm(symbol: Symbol, instructions: &Instructions) -> Function<WasmInstruction> {
-        let is = instructions.elements()
+        let is = instructions
+            .elements()
             .into_iter()
             .enumerate()
             .map(|(idx, insn)| WasmInstruction::new(idx as u64, insn.clone()))
@@ -292,7 +291,8 @@ impl Module<WasmInstruction> {
                 }
             }
             if let Some(code) = m.code_section() {
-                let functions = code.bodies()
+                let functions = code
+                    .bodies()
                     .iter()
                     .enumerate()
                     .map(|(idx, body)| {

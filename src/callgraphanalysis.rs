@@ -38,14 +38,12 @@ pub trait CallGraphAnalysis<I: Instruction> {
         instructions
             .iter()
             .filter(|i| i.is_call())
-            .map(|i| {
-                CallSite {
-                    call_site_address: i.address(),
-                    target: match i.target_address() {
-                        Some(a) => CallSiteTarget::Direct(a),
-                        None => CallSiteTarget::Indirect,
-                    },
-                }
+            .map(|i| CallSite {
+                call_site_address: i.address(),
+                target: match i.target_address() {
+                    Some(a) => CallSiteTarget::Direct(a),
+                    None => CallSiteTarget::Indirect,
+                },
             })
             .collect()
     }
@@ -53,9 +51,9 @@ pub trait CallGraphAnalysis<I: Instruction> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use address::Address;
     use function::Function;
-    use super::*;
     use symbol::Symbol;
     use tests::*;
 

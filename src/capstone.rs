@@ -8,9 +8,9 @@ extern crate capstone_rust;
 
 use self::capstone_rust::capstone;
 use self::capstone_rust::capstone_sys::{x86_insn, x86_insn_group};
-use std::fmt;
 use super::address::Address;
 use super::instruction::Instruction;
+use std::fmt;
 
 /// A representation of an eBPF instruction.
 #[derive(Debug)]
@@ -24,20 +24,15 @@ where
 {
     match i.detail {
         None => false,
-        Some(ref detail) => {
-            match i.id {
-                capstone::InstrIdArch::X86(_) => {
-                    match detail.groups.iter().find(predicate) {
-                        Some(_) => true,
-                        None => false,
-                    }
-                }
-                _ => unimplemented!(),
-            }
-        }
+        Some(ref detail) => match i.id {
+            capstone::InstrIdArch::X86(_) => match detail.groups.iter().find(predicate) {
+                Some(_) => true,
+                None => false,
+            },
+            _ => unimplemented!(),
+        },
     }
 }
-
 
 impl Instruction for CapstoneInstruction {
     fn address(&self) -> Address {
@@ -61,21 +56,20 @@ impl Instruction for CapstoneInstruction {
     }
 
     fn is_local_conditional_jump(&self) -> bool {
-        self.is_local_jump() &&
-            match self.insn.id {
-                capstone::InstrIdArch::X86(x86_insn::X86_INS_JMP) |
-                capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOP) |
-                capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOPE) |
-                capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOPNE) |
-                capstone::InstrIdArch::X86(x86_insn::X86_INS_XBEGIN) |
-                capstone::InstrIdArch::X86(_) => true,
-                _ => unimplemented!(),
-            }
+        self.is_local_jump() && match self.insn.id {
+            capstone::InstrIdArch::X86(x86_insn::X86_INS_JMP)
+            | capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOP)
+            | capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOPE)
+            | capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOPNE)
+            | capstone::InstrIdArch::X86(x86_insn::X86_INS_XBEGIN)
+            | capstone::InstrIdArch::X86(_) => true,
+            _ => unimplemented!(),
+        }
     }
 
     fn is_local_jump(&self) -> bool {
-        is_group_match(&self.insn, |&&x| x == x86_insn_group::X86_GRP_JUMP.as_int()) &&
-            match self.insn.id {
+        is_group_match(&self.insn, |&&x| x == x86_insn_group::X86_GRP_JUMP.as_int())
+            && match self.insn.id {
                 capstone::InstrIdArch::X86(x86_insn::X86_INS_LJMP) => false,
                 capstone::InstrIdArch::X86(_) => true,
                 _ => unimplemented!(),
@@ -99,9 +93,9 @@ impl fmt::Display for CapstoneInstruction {
 
 #[cfg(test)]
 mod tests {
-    use capstone::capstone_rust::capstone as cs;
-    use super::CapstoneInstruction;
     use super::super::{Address, Function, Symbol};
+    use super::CapstoneInstruction;
+    use capstone::capstone_rust::capstone as cs;
 
     #[test]
     fn test() {
@@ -109,7 +103,8 @@ mod tests {
 
         let dec = cs::Capstone::new(cs::cs_arch::CS_ARCH_X86, cs::cs_mode::CS_MODE_32).unwrap();
         let buf = dec.disasm(code, 0, 0).unwrap();
-        let is = buf.iter()
+        let is = buf
+            .iter()
             .map(|insn| CapstoneInstruction { insn })
             .collect::<Vec<_>>();
         let f = Function::new(Symbol::new(Address::new(100000), Some("test")), is);

@@ -9,9 +9,13 @@
 //! Utility for disassembling and inspecting eBPF bytecode.
 
 #![warn(missing_docs)]
-#![deny(trivial_numeric_casts,
-        unsafe_code, unstable_features,
-        unused_import_braces, unused_qualifications)]
+#![deny(
+    trivial_numeric_casts,
+    unsafe_code,
+    unstable_features,
+    unused_import_braces,
+    unused_qualifications
+)]
 
 extern crate clap;
 extern crate disassemble;

@@ -7,11 +7,11 @@
 extern crate rbpf;
 
 use self::rbpf::{disassembler, ebpf};
-use std::fmt;
 use super::address::Address;
 use super::function::Function;
 use super::instruction::Instruction;
 use super::symbol::Symbol;
+use std::fmt;
 
 /// A representation of an eBPF instruction.
 #[derive(Debug)]
@@ -53,8 +53,10 @@ impl Instruction for BpfInstruction {
     }
 
     fn is_local_jump(&self) -> bool {
-        (self.insn.opc & 0x07) == ebpf::BPF_JMP && (self.insn.opc != ebpf::CALL) &&
-            (self.insn.opc != ebpf::TAIL_CALL) && (self.insn.opc != ebpf::EXIT)
+        (self.insn.opc & 0x07) == ebpf::BPF_JMP
+            && (self.insn.opc != ebpf::CALL)
+            && (self.insn.opc != ebpf::TAIL_CALL)
+            && (self.insn.opc != ebpf::EXIT)
     }
 
     fn is_return(&self) -> bool {
@@ -76,7 +78,8 @@ impl Function<BpfInstruction> {
     /// Create a function from eBPF bytecode.
     pub fn from_bpf(symbol: Symbol, data: &[u8]) -> Function<BpfInstruction> {
         let v = rbpf::disassembler::to_insn_vec(data);
-        let is = v.into_iter()
+        let is = v
+            .into_iter()
             .enumerate()
             .map(|(idx, insn)| BpfInstruction::new(idx as u64, insn))
             .collect::<Vec<_>>();
@@ -105,7 +108,7 @@ mod tests {
             0x71, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // load r2 (= *(mem + 5)) into r0
             0x67, 0x00, 0x00, 0x00, 0x38, 0x00, 0x00, 0x00, // r0 >>= 56
             0xc7, 0x00, 0x00, 0x00, 0x38, 0x00, 0x00, 0x00, // r0 <<= 56 (arsh)
-            0x95, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00  // exit
+            0x95, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // exit
         ];
 
         let f = Function::from_bpf(Symbol::new(Address::new(100000), Some("test")), prog);

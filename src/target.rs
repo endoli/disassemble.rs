@@ -4,7 +4,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use super::{Module, Instruction};
+use super::{Instruction, Module};
 
 /// An executable.
 pub struct Target<I: Instruction> {

@@ -6,9 +6,9 @@
 
 extern crate burst;
 
-use std::fmt;
 use super::address::Address;
 use super::instruction::Instruction;
+use std::fmt;
 
 /// A representation of a Burst instruction.
 #[derive(Debug)]
@@ -46,8 +46,8 @@ impl Instruction for BurstInstruction {
         use self::burst::x86::InstructionOperation::*;
 
         match self.insn.operation {
-            JCXZ | JECXZ | JO | JNO | JB | JAE | JE | JNE | JBE | JA | JS | JNS | JPE | JPO |
-            JL | JGE | JLE | JG | LOOP | LOOPE | LOOPNE => true,
+            JCXZ | JECXZ | JO | JNO | JB | JAE | JE | JNE | JBE | JA | JS | JNS | JPE | JPO
+            | JL | JGE | JLE | JG | LOOP | LOOPE | LOOPNE => true,
             _ => false,
         }
     }
@@ -55,11 +55,10 @@ impl Instruction for BurstInstruction {
     fn is_local_jump(&self) -> bool {
         use self::burst::x86::InstructionOperation::*;
 
-        self.is_local_conditional_jump() ||
-            match self.insn.operation {
-                JMPF | JMP => true,
-                _ => false,
-            }
+        self.is_local_conditional_jump() || match self.insn.operation {
+            JMPF | JMP => true,
+            _ => false,
+        }
     }
 
     fn is_return(&self) -> bool {
@@ -86,11 +85,7 @@ impl fmt::Display for BurstInstruction {
         let data: [u8; 0] = [];
         let mut out = String::new();
         try!(burst::x86::format_instruction_string(
-            &mut out,
-            "%i %o",
-            &data,
-            0,
-            &self.insn,
+            &mut out, "%i %o", &data, 0, &self.insn,
         ));
         out.fmt(f)
     }

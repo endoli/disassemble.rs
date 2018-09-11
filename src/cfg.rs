@@ -110,16 +110,17 @@ impl ControlFlowGraph {
             // We jump through some hoops here to keep the borrow checker happy.
             if let Some(target_addr) = current_inst.target_address() {
                 if let Some(target_block_idx) = self.block_finder.get(&target_addr) {
-                    let edge = BasicBlockEdge { edge_type: EdgeType::ConditionalTaken };
-                    self.graph.add_edge(
-                        current_block_idx,
-                        *target_block_idx,
-                        edge,
-                    );
+                    let edge = BasicBlockEdge {
+                        edge_type: EdgeType::ConditionalTaken,
+                    };
+                    self.graph
+                        .add_edge(current_block_idx, *target_block_idx, edge);
                 }
 
                 next_block_idx.map(|index| {
-                    let edge = BasicBlockEdge { edge_type: EdgeType::ConditionalFallthrough };
+                    let edge = BasicBlockEdge {
+                        edge_type: EdgeType::ConditionalFallthrough,
+                    };
                     self.graph.add_edge(current_block_idx, index, edge);
                 });
             }
@@ -127,7 +128,9 @@ impl ControlFlowGraph {
             // We are calling a function, which will jump to target address and will return
             // to the instruction just after the current one.
             next_block_idx.map(|index| {
-                let edge = BasicBlockEdge { edge_type: EdgeType::Unconditional };
+                let edge = BasicBlockEdge {
+                    edge_type: EdgeType::Unconditional,
+                };
                 self.graph.add_edge(current_block_idx, index, edge);
             });
         } else if current_inst.is_local_jump() {
@@ -135,12 +138,11 @@ impl ControlFlowGraph {
             // block (if it exists).
             if let Some(target_addr) = current_inst.target_address() {
                 if let Some(target_block_idx) = self.block_finder.get(&target_addr) {
-                    let edge = BasicBlockEdge { edge_type: EdgeType::Unconditional };
-                    self.graph.add_edge(
-                        current_block_idx,
-                        *target_block_idx,
-                        edge,
-                    );
+                    let edge = BasicBlockEdge {
+                        edge_type: EdgeType::Unconditional,
+                    };
+                    self.graph
+                        .add_edge(current_block_idx, *target_block_idx, edge);
                 }
             }
         } else if current_inst.is_return() {
@@ -150,7 +152,9 @@ impl ControlFlowGraph {
             // it is non branching instruction, so we have to add an edge to the
             // following instruction.
             next_block_idx.map(|index| {
-                let edge = BasicBlockEdge { edge_type: EdgeType::Unconditional };
+                let edge = BasicBlockEdge {
+                    edge_type: EdgeType::Unconditional,
+                };
                 self.graph.add_edge(current_block_idx, index, edge);
             });
         }
@@ -181,9 +185,10 @@ impl ControlFlowGraph {
             }
             if let Some(next_inst) = next_inst_iter.next() {
                 // Does the next instruction begin a basic block?
-                let next_block_idx = *self.block_finder.get(&next_inst.address()).unwrap_or(
-                    &current_block_idx,
-                );
+                let next_block_idx = *self
+                    .block_finder
+                    .get(&next_inst.address())
+                    .unwrap_or(&current_block_idx);
                 // If we're at a block boundary, create an edge between the
                 // current and next blocks. The type of the edge is determined
                 // by looking at the current instruction.
@@ -202,12 +207,12 @@ impl ControlFlowGraph {
 
 #[cfg(test)]
 mod tests {
-    use petgraph::EdgeDirection;
-    use petgraph::graph::NodeIndex;
     use super::ControlFlowGraph;
-    use tests::*;
     use address::Address;
+    use petgraph::graph::NodeIndex;
+    use petgraph::EdgeDirection;
     use std::collections::HashSet;
+    use tests::*;
 
     #[test]
     fn construct() {
