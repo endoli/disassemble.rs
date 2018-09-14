@@ -345,14 +345,14 @@ impl Module<WasmInstruction> {
             if let Some(exports) = m.export_section() {
                 for export in exports.entries() {
                     if let &Internal::Function(index) = export.internal() {
-                        symbol_table.insert(Address::new(index as u64), export.field());
+                        symbol_table.insert(Address::new(u64::from(index)), export.field());
                     }
                 }
             }
             if let Some(imports) = m.import_section() {
                 for import in imports.entries() {
                     if let &External::Function(index) = import.external() {
-                        symbol_table.insert(Address::new(index as u64), import.field());
+                        symbol_table.insert(Address::new(u64::from(index)), import.field());
                     }
                 }
             }
