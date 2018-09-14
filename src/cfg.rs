@@ -117,22 +117,22 @@ impl ControlFlowGraph {
                         .add_edge(current_block_idx, *target_block_idx, edge);
                 }
 
-                next_block_idx.map(|index| {
+                if let Some(index) = next_block_idx {
                     let edge = BasicBlockEdge {
                         edge_type: EdgeType::ConditionalFallthrough,
                     };
                     self.graph.add_edge(current_block_idx, index, edge);
-                });
+                }
             }
         } else if current_inst.is_call() {
             // We are calling a function, which will jump to target address and will return
             // to the instruction just after the current one.
-            next_block_idx.map(|index| {
+            if let Some(index) = next_block_idx {
                 let edge = BasicBlockEdge {
                     edge_type: EdgeType::Unconditional,
                 };
                 self.graph.add_edge(current_block_idx, index, edge);
-            });
+            }
         } else if current_inst.is_local_jump() {
             // We are on an unconditional jump and we need to add an edge to the target
             // block (if it exists).
@@ -147,16 +147,14 @@ impl ControlFlowGraph {
             }
         } else if current_inst.is_return() {
             // Do we want to record this exit anywhere?
-        } else {
+        } else if let Some(index) = next_block_idx {
             // We are here because someone has a reference to the current instruction, but
             // it is non branching instruction, so we have to add an edge to the
             // following instruction.
-            next_block_idx.map(|index| {
-                let edge = BasicBlockEdge {
-                    edge_type: EdgeType::Unconditional,
-                };
-                self.graph.add_edge(current_block_idx, index, edge);
-            });
+            let edge = BasicBlockEdge {
+                edge_type: EdgeType::Unconditional,
+            };
+            self.graph.add_edge(current_block_idx, index, edge);
         }
     }
 
