@@ -19,9 +19,9 @@ pub enum Error {
 pub trait Segment: Debug {
     fn range(&self) -> Range<Address>;
 
-    fn contains(&self, address: &Address, length: u64) -> bool;
+    fn contains(&self, address: Address, length: u64) -> bool;
 
-    fn read_bytes(&self, address: &Address, length: u64) -> Result<&[u8], Error>;
+    fn read_bytes(&self, address: Address, length: u64) -> Result<&[u8], Error>;
 }
 
 #[allow(missing_docs)]
@@ -37,7 +37,7 @@ impl<'m> Memory<'m> {
     }
 
     #[allow(missing_docs)]
-    pub fn read_bytes(&self, address: &Address, length: u64) -> Result<&[u8], Error> {
+    pub fn read_bytes(&self, address: Address, length: u64) -> Result<&[u8], Error> {
         self.segments
             .iter()
             .find(|&s| s.contains(address, length))
