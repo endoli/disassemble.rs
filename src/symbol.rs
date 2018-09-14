@@ -23,7 +23,7 @@ impl Symbol {
     /// Construct a `Symbol`.
     pub fn new(address: Address, name: Option<&str>) -> Self {
         Symbol {
-            address: address,
+            address,
             name: name.map(|n| n.to_owned()),
         }
     }

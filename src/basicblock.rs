@@ -37,7 +37,7 @@ impl BasicBlock {
     pub fn new(address: Address) -> Self {
         BasicBlock {
             name: None,
-            address: address,
+            address,
             instruction_indices: vec![],
         }
     }

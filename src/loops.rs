@@ -27,7 +27,7 @@ pub struct SimpleLoop<'lsg> {
 impl<'lsg> SimpleLoop<'lsg> {
     pub fn new(counter: usize) -> Self {
         SimpleLoop {
-            counter: counter,
+            counter,
             ..Default::default()
         }
     }

@@ -182,7 +182,7 @@ mod tests {
         pub fn new(address: u64, opcode: Opcode) -> Self {
             TestInstruction {
                 address: Address::new(address),
-                opcode: opcode,
+                opcode,
             }
         }
     }

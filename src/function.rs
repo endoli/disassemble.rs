@@ -31,11 +31,11 @@ pub struct Function<I: Instruction> {
 impl<I: Instruction> Function<I> {
     /// Construct a new function
     pub fn new(symbol: Symbol, instructions: Vec<I>) -> Self {
-        let cfg = ControlFlowGraph::new(&instructions);
+        let control_flow_graph = ControlFlowGraph::new(&instructions);
         Function {
-            symbol: symbol,
-            instructions: instructions,
-            control_flow_graph: cfg,
+            symbol,
+            instructions,
+            control_flow_graph,
         }
     }
 }

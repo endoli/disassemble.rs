@@ -48,7 +48,7 @@ pub struct Address {
 impl Address {
     /// Construct an `Address`.
     pub fn new(address: u64) -> Self {
-        Address { address: address }
+        Address { address }
     }
 }
 
