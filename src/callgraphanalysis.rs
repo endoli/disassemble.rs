@@ -44,8 +44,7 @@ pub trait CallGraphAnalysis<I: Instruction> {
                     Some(a) => CallSiteTarget::Direct(a),
                     None => CallSiteTarget::Indirect,
                 },
-            })
-            .collect()
+            }).collect()
     }
 }
 

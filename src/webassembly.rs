@@ -365,8 +365,7 @@ impl Module<WasmInstruction> {
                         let addr = Address::new(idx as u64);
                         let name = symbol_table.get(&addr).map(|n| *n);
                         Function::from_wasm(Symbol::new(addr, name), body.code())
-                    })
-                    .collect();
+                    }).collect();
                 Some(Module { functions })
             } else {
                 None
