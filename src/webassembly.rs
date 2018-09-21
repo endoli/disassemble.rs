@@ -284,10 +284,6 @@ impl instruction::Instruction for WasmInstruction {
         }
     }
 
-    fn cycle_count(&self) -> Option<u32> {
-        None
-    }
-
     fn is_call(&self) -> bool {
         match self.insn {
             Instruction::Call(..) | Instruction::CallIndirect(..) => true,

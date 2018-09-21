@@ -40,10 +40,6 @@ impl Instruction for BpfInstruction {
         &*self.insn.name
     }
 
-    fn cycle_count(&self) -> Option<u32> {
-        None
-    }
-
     fn is_call(&self) -> bool {
         self.insn.opc == ebpf::CALL
     }

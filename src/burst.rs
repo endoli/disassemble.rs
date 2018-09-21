@@ -29,10 +29,6 @@ impl Instruction for BurstInstruction {
         self.insn.operation.mnemonic()
     }
 
-    fn cycle_count(&self) -> Option<u32> {
-        None
-    }
-
     fn is_call(&self) -> bool {
         use self::burst::x86::InstructionOperation::*;
 

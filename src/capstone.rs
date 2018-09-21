@@ -43,10 +43,6 @@ impl<'i> Instruction for CapstoneInstruction<'i> {
         &*self.insn.mnemonic().unwrap()
     }
 
-    fn cycle_count(&self) -> Option<u32> {
-        None
-    }
-
     fn is_call(&self) -> bool {
         self.is_group_match(InsnGroupType::CS_GRP_CALL)
     }

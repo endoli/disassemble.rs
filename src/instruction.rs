@@ -32,9 +32,6 @@ pub trait Instruction: fmt::Debug + fmt::Display {
     /// Any associated `comment` text for this instruction.
     fn comment(&self) -> Option<String>;
 
-    /// How many cycles does this instruction take to execute?
-    fn cycle_count(&self) -> Option<u32>;
-
     /// Does this instruction terminate a `BasicBlock`?
     ///
     /// This is used when constructing a [control flow graph]
