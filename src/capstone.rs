@@ -23,7 +23,7 @@ pub struct CapstoneInstruction<'i> {
 impl<'i> CapstoneInstruction<'i> {
     fn is_group_match(&self, group: u32) -> bool {
         if let Ok(detail) = self.cs.insn_detail(&self.insn) {
-            detail.groups().any(|g| (g.0 as u32) == group)
+            detail.groups().any(|g| u32::from(g.0) == group)
         } else {
             false
         }
