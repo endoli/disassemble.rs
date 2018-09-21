@@ -4,39 +4,35 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-extern crate capstone_rust;
+extern crate capstone;
 
-use self::capstone_rust::capstone;
-use self::capstone_rust::capstone_sys::{x86_insn, x86_insn_group};
+use self::capstone::arch::x86::X86Insn;
+use self::capstone::prelude::*;
+use self::capstone::{Insn, InsnGroupType};
 use super::address::Address;
 use super::instruction::Instruction;
 use std::fmt;
 
-/// A representation of an eBPF instruction.
+/// A representation of a Capstone instruction.
 #[derive(Debug)]
-pub struct CapstoneInstruction {
-    insn: capstone::Instr,
+pub struct CapstoneInstruction<'i> {
+    insn: Insn<'i>,
+    cs: &'i Capstone<'i>,
 }
 
-fn is_group_match<F>(i: &capstone::Instr, predicate: F) -> bool
-where
-    F: Fn(&&u32) -> bool,
-{
-    match i.detail {
-        None => false,
-        Some(ref detail) => match i.id {
-            capstone::InstrIdArch::X86(_) => match detail.groups.iter().find(predicate) {
-                Some(_) => true,
-                None => false,
-            },
-            _ => unimplemented!(),
-        },
+impl<'i> CapstoneInstruction<'i> {
+    fn is_group_match(&self, group: u32) -> bool {
+        if let Ok(detail) = self.cs.insn_detail(&self.insn) {
+            detail.groups().any(|g| (g.0 as u32) == group)
+        } else {
+            false
+        }
     }
 }
 
-impl Instruction for CapstoneInstruction {
+impl<'i> Instruction for CapstoneInstruction<'i> {
     fn address(&self) -> Address {
-        Address::new(self.insn.address)
+        Address::new(self.insn.address())
     }
 
     fn comment(&self) -> Option<String> {
@@ -44,7 +40,7 @@ impl Instruction for CapstoneInstruction {
     }
 
     fn mnemonic(&self) -> &str {
-        &*self.insn.mnemonic
+        &*self.insn.mnemonic().unwrap()
     }
 
     fn cycle_count(&self) -> Option<u32> {
@@ -52,32 +48,33 @@ impl Instruction for CapstoneInstruction {
     }
 
     fn is_call(&self) -> bool {
-        is_group_match(&self.insn, |&&x| x == x86_insn_group::X86_GRP_CALL.as_int())
+        self.is_group_match(InsnGroupType::CS_GRP_CALL)
     }
 
+    #[allow(unsafe_code)]
     fn is_local_conditional_jump(&self) -> bool {
-        self.is_local_jump() && match self.insn.id {
-            capstone::InstrIdArch::X86(x86_insn::X86_INS_JMP)
-            | capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOP)
-            | capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOPE)
-            | capstone::InstrIdArch::X86(x86_insn::X86_INS_LOOPNE)
-            | capstone::InstrIdArch::X86(x86_insn::X86_INS_XBEGIN)
-            | capstone::InstrIdArch::X86(_) => true,
-            _ => unimplemented!(),
+        self.is_local_jump() && match unsafe { ::std::mem::transmute(self.insn.id().0) } {
+            X86Insn::X86_INS_JMP
+            | X86Insn::X86_INS_LOOP
+            | X86Insn::X86_INS_LOOPE
+            | X86Insn::X86_INS_LOOPNE
+            | X86Insn::X86_INS_XBEGIN => true,
+            _ => false,
         }
     }
 
+    #[allow(unsafe_code)]
     fn is_local_jump(&self) -> bool {
-        is_group_match(&self.insn, |&&x| x == x86_insn_group::X86_GRP_JUMP.as_int())
-            && match self.insn.id {
-                capstone::InstrIdArch::X86(x86_insn::X86_INS_LJMP) => false,
-                capstone::InstrIdArch::X86(_) => true,
-                _ => unimplemented!(),
-            }
+        self.is_group_match(InsnGroupType::CS_GRP_JUMP) && match unsafe {
+            ::std::mem::transmute(self.insn.id().0)
+        } {
+            X86Insn::X86_INS_LJMP => false,
+            _ => true,
+        }
     }
 
     fn is_return(&self) -> bool {
-        is_group_match(&self.insn, |&&x| x == x86_insn_group::X86_GRP_RET.as_int())
+        self.is_group_match(InsnGroupType::CS_GRP_RET)
     }
 
     fn target_address(&self) -> Option<Address> {
@@ -85,27 +82,39 @@ impl Instruction for CapstoneInstruction {
     }
 }
 
-impl fmt::Display for CapstoneInstruction {
+impl<'i> fmt::Display for CapstoneInstruction<'i> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{} {}", self.insn.mnemonic, self.insn.op_str)
+        write!(
+            f,
+            "{} {}",
+            self.insn.mnemonic().unwrap(),
+            self.insn.op_str().unwrap()
+        )
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::super::{Address, Function, Symbol};
+    use super::capstone::prelude::*;
     use super::CapstoneInstruction;
-    use capstone::capstone_rust::capstone as cs;
 
     #[test]
     fn test() {
         let code = &[0x55, 0x48, 0x8b, 0x05, 0xb8, 0x13, 0x00, 0x00];
 
-        let dec = cs::Capstone::new(cs::cs_arch::CS_ARCH_X86, cs::cs_mode::CS_MODE_32).unwrap();
-        let buf = dec.disasm(code, 0, 0).unwrap();
+        let mut cs = Capstone::new()
+            .x86()
+            .mode(arch::x86::ArchMode::Mode32)
+            .syntax(arch::x86::ArchSyntax::Att)
+            .detail(true)
+            .build()
+            .unwrap();
+
+        let buf = cs.disasm_all(code, 0).unwrap();
         let is = buf
             .iter()
-            .map(|insn| CapstoneInstruction { insn })
+            .map(|insn| CapstoneInstruction { insn, cs: &cs })
             .collect::<Vec<_>>();
         let f = Function::new(Symbol::new(Address::new(100000), Some("test")), is);
 
