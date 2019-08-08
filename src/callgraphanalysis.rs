@@ -4,8 +4,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use address::Address;
-use instruction::Instruction;
+use crate::address::Address;
+use crate::instruction::Instruction;
 
 /// Information about the target of a `CallSite`.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -51,10 +51,10 @@ pub trait CallGraphAnalysis<I: Instruction> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use address::Address;
-    use function::Function;
-    use symbol::Symbol;
-    use tests::*;
+    use crate::address::Address;
+    use crate::function::Function;
+    use crate::symbol::Symbol;
+    use crate::tests::*;
 
     #[test]
     fn calls_none() {

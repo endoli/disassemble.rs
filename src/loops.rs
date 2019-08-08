@@ -6,7 +6,7 @@
 
 #![allow(missing_docs)]
 
-use cfg::ControlFlowGraph;
+use crate::cfg::ControlFlowGraph;
 use petgraph::graph::NodeIndex;
 
 #[derive(Debug, Default)]

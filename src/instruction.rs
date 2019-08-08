@@ -4,7 +4,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use address::Address;
+use crate::address::Address;
 use std::fmt;
 
 /// An assembly instruction, bytecode operation, VM operation, etc.

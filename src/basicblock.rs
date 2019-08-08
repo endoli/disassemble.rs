@@ -4,7 +4,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use address::Address;
+use crate::address::Address;
 
 /// When is this edge taken? Conditionally or unconditionally?
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]

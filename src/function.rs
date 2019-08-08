@@ -4,10 +4,10 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use callgraphanalysis::{CallGraphAnalysis, CallSite};
-use cfg::ControlFlowGraph;
-use instruction::Instruction;
-use symbol::Symbol;
+use crate::callgraphanalysis::{CallGraphAnalysis, CallSite};
+use crate::cfg::ControlFlowGraph;
+use crate::instruction::Instruction;
+use crate::symbol::Symbol;
 
 /// A function within a program.
 pub struct Function<I: Instruction> {

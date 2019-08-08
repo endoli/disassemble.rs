@@ -4,9 +4,9 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use address::Address;
-use basicblock::{BasicBlock, BasicBlockEdge, EdgeType};
-use instruction::Instruction;
+use crate::address::Address;
+use crate::basicblock::{BasicBlock, BasicBlockEdge, EdgeType};
+use crate::instruction::Instruction;
 use petgraph::graph::{Graph, NodeIndex};
 use std::collections::BTreeMap;
 
@@ -206,11 +206,11 @@ impl ControlFlowGraph {
 #[cfg(test)]
 mod tests {
     use super::ControlFlowGraph;
-    use address::Address;
+    use crate::address::Address;
     use petgraph::graph::NodeIndex;
     use petgraph::EdgeDirection;
     use std::collections::HashSet;
-    use tests::*;
+    use crate::tests::*;
 
     #[test]
     fn construct() {

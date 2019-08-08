@@ -4,7 +4,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use address::Address;
+use crate::address::Address;
 use std::fmt::Debug;
 use std::io;
 use std::ops::Range;

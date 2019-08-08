@@ -4,7 +4,7 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
-use address::Address;
+use crate::address::Address;
 
 /// A symbol within an executable or library. This is a named [address].
 ///

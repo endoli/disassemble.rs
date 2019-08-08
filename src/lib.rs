@@ -152,8 +152,8 @@ mod tests {
     //! use in testing out this crate without having to hook up to
     //! a real disassembler.
 
-    use address::Address;
-    use instruction::Instruction;
+    use crate::address::Address;
+    use crate::instruction::Instruction;
 
     /// Opcodes that we'll use as instructions.
     #[derive(Debug)]
