@@ -27,7 +27,7 @@ pub trait Segment: Debug {
 #[allow(missing_docs)]
 #[derive(Debug, Default)]
 pub struct Memory<'m> {
-    segments: Vec<&'m Segment>,
+    segments: Vec<&'m dyn Segment>,
 }
 
 impl<'m> Memory<'m> {
