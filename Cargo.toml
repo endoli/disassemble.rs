@@ -17,7 +17,7 @@ webassembly = ["parity-wasm"]
 all = ["bpf", "capstone", "webassembly", "burst"]
 
 [dependencies]
-petgraph = "0.4.4"
+petgraph = "0.6"
 burst = { version = "0.0.2", optional = true }
 capstone = { version = "0.5", optional = true }
 parity-wasm = { version = "0.32", optional = true }
