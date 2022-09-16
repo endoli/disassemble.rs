@@ -1,6 +1,6 @@
 # Disassemble
 
-[![Build Status](https://travis-ci.org/endoli/disassemble.rs.svg?branch=master)](https://travis-ci.org/endoli/disassemble.rs)
+[![Build Status](https://github.com/endoli/disassemble.rs/actions/workflows/rust.yml/badge.svg)](https://github.com/endoli/disassemble.rs/actions/workflows/rust.yml)
 [![](http://meritbadge.herokuapp.com/disassemble)](https://crates.io/crates/disassemble)
 
 Dual licensed under the MIT and Apache 2 licenses.
