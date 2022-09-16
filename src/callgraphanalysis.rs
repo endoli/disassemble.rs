@@ -8,7 +8,7 @@ use crate::address::Address;
 use crate::instruction::Instruction;
 
 /// Information about the target of a `CallSite`.
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub enum CallSiteTarget {
     /// The call site directly invokes the function at the `Address`.
     Direct(Address),
@@ -18,7 +18,7 @@ pub enum CallSiteTarget {
 }
 
 /// Information about a call site.
-#[derive(Clone, Copy, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct CallSite {
     /// The address of the call site.
     pub call_site_address: Address,
