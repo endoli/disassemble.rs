@@ -22,8 +22,8 @@ pub trait Instruction: fmt::Debug + fmt::Display {
     /// The [`address`] of an instruction must be unique within a
     /// [`function`].
     ///
-    /// [`address`]: struct.Address.html
-    /// [`function`]: struct.Function.html
+    /// [`address`]: Address
+    /// [`function`]: crate::Function
     fn address(&self) -> Address;
 
     /// The mnemonic for this `Instruction`.
@@ -38,7 +38,7 @@ pub trait Instruction: fmt::Debug + fmt::Display {
     /// to help break a sequence of instructions into basic
     /// blocks.
     ///
-    /// [`BasicBlock`]: struct.BasicBlock.html
+    /// [`BasicBlock`]: crate::BasicBlock
     fn is_block_terminator(&self) -> bool {
         self.is_call() || self.is_local_jump() || self.is_return()
     }

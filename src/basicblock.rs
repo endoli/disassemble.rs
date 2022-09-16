@@ -48,11 +48,11 @@ impl BasicBlock {
 /// This represents a branch, jump or other form of control flow
 /// transfer within the control flow graph.
 ///
-/// [basic blocks]: struct.BasicBlock.html
+/// [basic blocks]: BasicBlock
 #[derive(Debug)]
 pub struct BasicBlockEdge {
     /// Is this edge taken [conditionally or unconditionally]?
     ///
-    /// [conditionally or unconditionally]: enum.EdgeType.html
+    /// [conditionally or unconditionally]: EdgeType
     pub edge_type: EdgeType,
 }

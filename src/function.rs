@@ -13,18 +13,18 @@ use crate::symbol::Symbol;
 pub struct Function<I: Instruction> {
     /// The [symbol] for this function. This provides the name and [`Address`].
     ///
-    /// [`Address`]: struct.Symbol.html
-    /// [symbol]: struct.Symbol.html
+    /// [`Address`]: crate::Address
+    /// [symbol]: Symbol
     pub symbol: Symbol,
     /// The [instructions] that comprise this function.
     ///
-    /// [instructions]: trait.Instruction.html
+    /// [instructions]: Instruction
     pub instructions: Vec<I>,
     /// The [control flow graph] for this function. This is built from the
     /// `instructions`. It is made up of [basic blocks].
     ///
-    /// [basic blocks]: struct.BasicBlock.html
-    /// [control flow graph]: struct.ControlFlowGraph.html
+    /// [basic blocks]: crate::BasicBlock
+    /// [control flow graph]: ControlFlowGraph
     pub control_flow_graph: ControlFlowGraph,
 }
 

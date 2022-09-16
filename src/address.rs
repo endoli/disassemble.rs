@@ -38,8 +38,8 @@ use std::fmt;
 /// assert_eq!("0x00006502", format!("{:#010x}", a));
 /// ```
 ///
-/// [`Function`]: struct.Function.html
-/// [`Instruction`]: trait.Instruction.html
+/// [`Function`]: crate::Function
+/// [`Instruction`]: crate::Instruction
 #[derive(Clone, Copy, Debug, Eq, Hash, Ord, PartialEq, PartialOrd)]
 pub struct Address {
     address: u64,

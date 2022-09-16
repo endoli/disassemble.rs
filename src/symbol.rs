@@ -8,12 +8,12 @@ use crate::address::Address;
 
 /// A symbol within an executable or library. This is a named [address].
 ///
-/// [address]: struct.Address.html
+/// [address]: Address
 #[derive(Debug)]
 pub struct Symbol {
     /// The [address] of this symbol.
     ///
-    /// [address]: struct.Address.html
+    /// [address]: Address
     pub address: Address,
     /// The name of this symbol.
     pub name: Option<String>,

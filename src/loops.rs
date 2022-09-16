@@ -63,8 +63,6 @@ enum BasicBlockType {
 ///      loop-3    1                1
 ///        loop-2  0                2
 /// ```
-///
-/// [`ControlFlowGraph`]: struct.ControlFlowGraph.html
 pub struct LoopStructureGraph<'lsg> {
     pub loop_counter: usize,
     pub loops: Vec<SimpleLoop<'lsg>>,

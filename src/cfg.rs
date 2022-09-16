@@ -15,18 +15,13 @@ use std::collections::BTreeMap;
 /// [control flow graph]: https://en.wikipedia.org/wiki/Control_flow_graph
 pub struct ControlFlowGraph {
     /// The [`Graph`] that stores the actual ControlFlowGraph
-    ///
-    /// [`Graph`]: ../petgraph/graph/struct.Graph.html
     pub graph: Graph<BasicBlock, BasicBlockEdge>,
     /// The [`NodeIndex`] for the entry [`BasicBlock`] for this function.
-    ///
-    /// [`BasicBlock`]: struct.BasicBlock.html
-    /// [`NodeIndex`]: ../petgraph/graph/struct.NodeIndex.html
     pub entry_block: Option<NodeIndex>,
     /// Map an [address] to the corresponding [basic block].
     ///
-    /// [address]: struct.Address.html
-    /// [basic block]: struct.BasicBlock.html
+    /// [address]: Address
+    /// [basic block]: BasicBlock
     pub block_finder: BTreeMap<Address, NodeIndex>,
 }
 
@@ -42,7 +37,7 @@ impl ControlFlowGraph {
     /// This two step process prevents us from having to construct and then
     /// subsequently split blocks as we find backward edges.
     ///
-    /// [`instructions`]: trait.Instruction.html
+    /// [`instructions`]: Instruction
     pub fn new<I: Instruction>(instructions: &[I]) -> Self {
         let mut cfg = ControlFlowGraph {
             graph: Graph::new(),

@@ -82,13 +82,9 @@
 //! Contributions are welcome.
 //!
 //! [Capstone Engine]: http://www.capstone-engine.org/
-//! [`ControlFlowGraph`]: struct.ControlFlowGraph.html
 //! [control flow graph]: https://en.wikipedia.org/wiki/Control_flow_graph
 //! [data flow analysis]: https://en.wikipedia.org/wiki/Data-flow_analysis
-//! [`Function`]: struct.Function.html
-//! [`Instruction`]: trait.Instruction.html
 //! [`petgraph`]: https://crates.io/crates/petgraph
-//! [`Symbol`]: struct.Symbol.html
 
 #![warn(missing_docs)]
 #![deny(
