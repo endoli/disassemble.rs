@@ -40,7 +40,7 @@ impl<'i> Instruction for CapstoneInstruction<'i> {
     }
 
     fn mnemonic(&self) -> &str {
-        &*self.insn.mnemonic().unwrap()
+        self.insn.mnemonic().unwrap()
     }
 
     fn is_call(&self) -> bool {
@@ -50,23 +50,23 @@ impl<'i> Instruction for CapstoneInstruction<'i> {
     #[allow(unsafe_code)]
     fn is_local_conditional_jump(&self) -> bool {
         self.is_local_jump()
-            && match unsafe { ::std::mem::transmute(self.insn.id().0) } {
+            && matches!(
+                unsafe { ::std::mem::transmute(self.insn.id().0) },
                 X86Insn::X86_INS_JMP
-                | X86Insn::X86_INS_LOOP
-                | X86Insn::X86_INS_LOOPE
-                | X86Insn::X86_INS_LOOPNE
-                | X86Insn::X86_INS_XBEGIN => true,
-                _ => false,
-            }
+                    | X86Insn::X86_INS_LOOP
+                    | X86Insn::X86_INS_LOOPE
+                    | X86Insn::X86_INS_LOOPNE
+                    | X86Insn::X86_INS_XBEGIN
+            )
     }
 
     #[allow(unsafe_code)]
     fn is_local_jump(&self) -> bool {
         self.is_group_match(InsnGroupType::CS_GRP_JUMP)
-            && match unsafe { ::std::mem::transmute(self.insn.id().0) } {
-                X86Insn::X86_INS_LJMP => false,
-                _ => true,
-            }
+            && !matches!(
+                unsafe { ::std::mem::transmute(self.insn.id().0) },
+                X86Insn::X86_INS_LJMP
+            )
     }
 
     fn is_return(&self) -> bool {

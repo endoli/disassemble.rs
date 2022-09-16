@@ -285,32 +285,25 @@ impl instruction::Instruction for WasmInstruction {
     }
 
     fn is_call(&self) -> bool {
-        match self.insn {
-            Instruction::Call(..) | Instruction::CallIndirect(..) => true,
-            _ => false,
-        }
+        matches!(
+            self.insn,
+            Instruction::Call(..) | Instruction::CallIndirect(..)
+        )
     }
 
     fn is_local_conditional_jump(&self) -> bool {
-        match self.insn {
-            Instruction::If(..) | Instruction::BrIf(..) | Instruction::BrTable(..) => true,
-            _ => false,
-        }
+        matches!(
+            self.insn,
+            Instruction::If(..) | Instruction::BrIf(..) | Instruction::BrTable(..)
+        )
     }
 
     fn is_local_jump(&self) -> bool {
-        self.is_local_conditional_jump()
-            || match self.insn {
-                Instruction::Br(..) => true,
-                _ => false,
-            }
+        self.is_local_conditional_jump() || matches!(self.insn, Instruction::Br(..))
     }
 
     fn is_return(&self) -> bool {
-        match self.insn {
-            Instruction::Return => true,
-            _ => false,
-        }
+        matches!(self.insn, Instruction::Return)
     }
 
     fn target_address(&self) -> Option<Address> {
@@ -326,7 +319,7 @@ impl Function<WasmInstruction> {
     pub fn from_wasm(symbol: Symbol, instructions: &Instructions) -> Function<WasmInstruction> {
         let is = instructions
             .elements()
-            .into_iter()
+            .iter()
             .enumerate()
             .map(|(idx, insn)| WasmInstruction::new(idx as u64, insn.clone()))
             .collect::<Vec<_>>();
@@ -360,7 +353,7 @@ impl Module<WasmInstruction> {
                     .enumerate()
                     .map(|(idx, body)| {
                         let addr = Address::new(idx as u64);
-                        let name = symbol_table.get(&addr).map(|n| *n);
+                        let name = symbol_table.get(&addr).copied();
                         Function::from_wasm(Symbol::new(addr, name), body.code())
                     })
                     .collect();

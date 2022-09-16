@@ -32,39 +32,27 @@ impl Instruction for BurstInstruction {
     fn is_call(&self) -> bool {
         use self::burst::x86::InstructionOperation::*;
 
-        match self.insn.operation {
-            CALL | CALLF => true,
-            _ => false,
-        }
+        matches!(self.insn.operation, CALL | CALLF)
     }
 
     fn is_local_conditional_jump(&self) -> bool {
         use self::burst::x86::InstructionOperation::*;
 
-        match self.insn.operation {
+        matches!(self.insn.operation,
             JCXZ | JECXZ | JO | JNO | JB | JAE | JE | JNE | JBE | JA | JS | JNS | JPE | JPO
-            | JL | JGE | JLE | JG | LOOP | LOOPE | LOOPNE => true,
-            _ => false,
-        }
+            | JL | JGE | JLE | JG | LOOP | LOOPE | LOOPNE)
     }
 
     fn is_local_jump(&self) -> bool {
         use self::burst::x86::InstructionOperation::*;
 
-        self.is_local_conditional_jump()
-            || match self.insn.operation {
-                JMPF | JMP => true,
-                _ => false,
-            }
+        self.is_local_conditional_jump() || matches!(self.insn.operation, JMPF | JMP)
     }
 
     fn is_return(&self) -> bool {
         use self::burst::x86::InstructionOperation::*;
 
-        match self.insn.operation {
-            RETF | RETN => true,
-            _ => false,
-        }
+        matches!(self.insn.operation, RETF | RETN)
     }
 
     fn target_address(&self) -> Option<Address> {
