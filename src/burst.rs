@@ -51,10 +51,11 @@ impl Instruction for BurstInstruction {
     fn is_local_jump(&self) -> bool {
         use self::burst::x86::InstructionOperation::*;
 
-        self.is_local_conditional_jump() || match self.insn.operation {
-            JMPF | JMP => true,
-            _ => false,
-        }
+        self.is_local_conditional_jump()
+            || match self.insn.operation {
+                JMPF | JMP => true,
+                _ => false,
+            }
     }
 
     fn is_return(&self) -> bool {
@@ -80,9 +81,7 @@ impl fmt::Display for BurstInstruction {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let data: [u8; 0] = [];
         let mut out = String::new();
-        burst::x86::format_instruction_string(
-            &mut out, "%i %o", &data, 0, &self.insn,
-        )?;
+        burst::x86::format_instruction_string(&mut out, "%i %o", &data, 0, &self.insn)?;
         out.fmt(f)
     }
 }

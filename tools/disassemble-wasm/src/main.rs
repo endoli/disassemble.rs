@@ -32,7 +32,8 @@ fn main() {
                 .help("The binary WebAssembly file to use.")
                 .required(true)
                 .index(1),
-        ).get_matches();
+        )
+        .get_matches();
 
     let file = matches.value_of("FILE").unwrap();
 

@@ -299,10 +299,11 @@ impl instruction::Instruction for WasmInstruction {
     }
 
     fn is_local_jump(&self) -> bool {
-        self.is_local_conditional_jump() || match self.insn {
-            Instruction::Br(..) => true,
-            _ => false,
-        }
+        self.is_local_conditional_jump()
+            || match self.insn {
+                Instruction::Br(..) => true,
+                _ => false,
+            }
     }
 
     fn is_return(&self) -> bool {
@@ -361,7 +362,8 @@ impl Module<WasmInstruction> {
                         let addr = Address::new(idx as u64);
                         let name = symbol_table.get(&addr).map(|n| *n);
                         Function::from_wasm(Symbol::new(addr, name), body.code())
-                    }).collect();
+                    })
+                    .collect();
                 Some(Module { functions })
             } else {
                 None

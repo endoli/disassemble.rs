@@ -207,10 +207,10 @@ impl ControlFlowGraph {
 mod tests {
     use super::ControlFlowGraph;
     use crate::address::Address;
+    use crate::tests::*;
     use petgraph::graph::NodeIndex;
     use petgraph::EdgeDirection;
     use std::collections::HashSet;
-    use crate::tests::*;
 
     #[test]
     fn construct() {
