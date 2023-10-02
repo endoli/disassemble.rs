@@ -38,9 +38,29 @@ impl Instruction for BurstInstruction {
     fn is_local_conditional_jump(&self) -> bool {
         use self::burst::x86::InstructionOperation::*;
 
-        matches!(self.insn.operation,
-            JCXZ | JECXZ | JO | JNO | JB | JAE | JE | JNE | JBE | JA | JS | JNS | JPE | JPO
-            | JL | JGE | JLE | JG | LOOP | LOOPE | LOOPNE)
+        matches!(
+            self.insn.operation,
+            JCXZ | JECXZ
+                | JO
+                | JNO
+                | JB
+                | JAE
+                | JE
+                | JNE
+                | JBE
+                | JA
+                | JS
+                | JNS
+                | JPE
+                | JPO
+                | JL
+                | JGE
+                | JLE
+                | JG
+                | LOOP
+                | LOOPE
+                | LOOPNE
+        )
     }
 
     fn is_local_jump(&self) -> bool {
