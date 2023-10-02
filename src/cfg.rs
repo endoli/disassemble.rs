@@ -26,7 +26,7 @@ pub struct ControlFlowGraph {
 }
 
 impl ControlFlowGraph {
-    /// Build the ControlFlowGraph from the [`instructions`].
+    /// Build the `ControlFlowGraph` from the [`instructions`].
     ///
     /// This is conducted in a 2 step process:
     ///
