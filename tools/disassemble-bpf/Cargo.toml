@@ -2,7 +2,7 @@
 name = "disassemble-bpf"
 version = "0.0.1"
 authors = ["Bruce Mitchener <bruce.mitchener@gmail.com>"]
-license = "MIT/Apache-2.0"
+license = "MIT OR Apache-2.0"
 readme = "README.md"
 description = "Tool for disassembling and inspecting eBPF bytecode."
 keywords = ["disassemble", "bpf", "ebpf", "decompile"]
