@@ -251,16 +251,16 @@ mod tests {
 
         let root_idx = *cfg.block_finder.get(&Address::new(0)).unwrap();
         let cond_taken_idx = *cfg.block_finder.get(&Address::new(4)).unwrap();
-        let falltrough_idx = *cfg.block_finder.get(&Address::new(2)).unwrap();
+        let fallthrough_idx = *cfg.block_finder.get(&Address::new(2)).unwrap();
         let ret_idx = *cfg.block_finder.get(&Address::new(5)).unwrap();
 
         let neighbours = cfg.graph.neighbors(root_idx).into_iter().collect();
-        assert_neighbours(neighbours, vec![cond_taken_idx, falltrough_idx]);
+        assert_neighbours(neighbours, vec![cond_taken_idx, fallthrough_idx]);
 
         let neighbours = cfg.graph.neighbors(cond_taken_idx).into_iter().collect();
         assert_neighbours(neighbours, vec![ret_idx]);
 
-        let neighbours = cfg.graph.neighbors(falltrough_idx).into_iter().collect();
+        let neighbours = cfg.graph.neighbors(fallthrough_idx).into_iter().collect();
         assert_neighbours(neighbours, vec![ret_idx]);
 
         let neighbours = cfg.graph.neighbors(ret_idx).into_iter().collect();
