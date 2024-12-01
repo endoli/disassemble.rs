@@ -24,7 +24,7 @@ pub struct SimpleLoop<'lsg> {
     pub depth_level: usize,
 }
 
-impl<'lsg> SimpleLoop<'lsg> {
+impl SimpleLoop<'_> {
     pub fn new(counter: usize) -> Self {
         SimpleLoop {
             counter,
@@ -69,7 +69,7 @@ pub struct LoopStructureGraph<'lsg> {
     pub root: SimpleLoop<'lsg>,
 }
 
-impl<'lsg> Default for LoopStructureGraph<'lsg> {
+impl Default for LoopStructureGraph<'_> {
     fn default() -> Self {
         LoopStructureGraph {
             loop_counter: 1,

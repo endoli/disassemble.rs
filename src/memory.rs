@@ -30,7 +30,7 @@ pub struct Memory<'m> {
     segments: Vec<&'m dyn Segment>,
 }
 
-impl<'m> Memory<'m> {
+impl Memory<'_> {
     #[allow(missing_docs)]
     pub fn new() -> Self {
         Default::default()
