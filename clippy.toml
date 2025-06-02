@@ -1,1 +1,1 @@
-doc-valid-idents = ["eBPF", "WebAssembly"]
+doc-valid-idents = ["eBPF", ".."]

@@ -14,7 +14,7 @@ use std::collections::BTreeMap;
 ///
 /// [control flow graph]: https://en.wikipedia.org/wiki/Control_flow_graph
 pub struct ControlFlowGraph {
-    /// The [`Graph`] that stores the actual ControlFlowGraph
+    /// The [`Graph`] that stores the actual control flow graph.
     pub graph: Graph<BasicBlock, BasicBlockEdge>,
     /// The [`NodeIndex`] for the entry [`BasicBlock`] for this function.
     pub entry_block: Option<NodeIndex>,
